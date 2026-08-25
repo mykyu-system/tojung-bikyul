@@ -11,7 +11,7 @@ const STEM=['갑','을','병','정','무','기','경','신','임','계'],BRANCH=
 for(let i=1;i<=12;i++)$('bm').insertAdjacentHTML('beforeend',`<option value="${i}">${i}월</option>`);$('mode').onchange=()=>{$('leapWrap').classList.toggle('hidden',$('mode').value!=='lunar');$('bd').max=$('mode').value==='lunar'?30:31};
 async function load(){let r=await fetch('./Mykyu-system_TOJEONG_100_FINAL.json',{cache:'no-store'});if(!r.ok)throw Error('data');APP=await r.json()}
 function yearGanji(y){return GANJI[((y-4)%60+60)%60]}
-function monthGanji(y,m){let ystem=((y-4)%60+60)%60%10;let starts=[2,4,6,8,0];let stem=(starts[Math.floor(ystem/2)]+m-1)%10;return STEM[stem]+BRANCH[m-1]}
+function monthGanji(y,m){let ystem=((y-4)%60+60)%60%10;let startsByStem={0:2,5:2,1:4,6:4,2:6,7:6,3:8,8:8,4:0,9:0};let stem=(startsByStem[ystem]+m-1)%10;return STEM[stem]+BRANCH[m-1]}
 function findJ(key){let jc=APP?.calculation?.jogyeonpyo||{};if(jc[key])return jc[key];let want=String(key);for(const [k,v] of Object.entries(jc)){if(k===want)return v;if(v&&typeof v==='object'){for(const n of ['간지','간지명','name','key','월건','일진'])if(v[n]&&String(v[n])===want)return v}}return null}
 function getDayGanji(x){if(!x)return '';return x.dayGanji||x.day_ganji||x.일진||x.일진간지||x.ganji||''}
 function personal(age,lm,ld,g){let score=g.overall_score,tone=score>=90?'강한 흐름':score>=80?'안정적인 흐름':score>=70?'관리형 흐름':'주의가 필요한 흐름',k=(g.keywords||[]).slice(0,3).join('·'),action=score>=85?'기회를 실행으로 옮기되 계약·지출은 한 번 더 확인':score>=75?'준비와 실행의 균형을 잡고 작은 성과부터 쌓기':'확장보다 정리·절약·관계 관리에 우선순위를 두기';return `세는나이 ${age}세, 음력 ${lm}월 ${ld}일을 기준으로 ${g.name}의 ${tone}이 겹치는 해입니다. 핵심 키워드 ${k||'균형·준비·기회'}를 중심으로 움직일수록 흐름을 살리기 좋습니다. ${action}.`}

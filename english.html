@@ -1,68 +1,13 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mykyu-system — Personal Tojeong Fortune</title><style>html,body{margin:0;padding:0;background:#fff}iframe{display:block;width:100%;min-height:3900px;border:0}</style></head><body><iframe id="app" title="Mykyu-system Personal Fortune" loading="eager"></iframe><script>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mykyu-system — A Gentle Personal Fortune Reading</title><style>html,body{margin:0;padding:0;background:#faf9fc}iframe{display:block;width:100%;min-height:5600px;border:0}</style></head><body><iframe id="app" title="Mykyu-system Personal Fortune Reading" loading="eager"></iframe><script>
 (async()=>{
 const frame=document.getElementById('app');
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
-const cacheKey=t=>'mykyu_en_'+btoa(unescape(encodeURIComponent(t))).slice(0,180);
-async function translate(text){
-  const t=(text||'').trim(); if(!t)return '';
-  if(/^[\x00-\x7F]*$/.test(t))return t;
-  try{
-    const ck=cacheKey(t),cached=localStorage.getItem(ck); if(cached)return cached;
-    const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q='+encodeURIComponent(t);
-    const r=await fetch(url); if(!r.ok)throw Error('translate');
-    const a=await r.json(); const out=(a?.[0]||[]).map(x=>x?.[0]||'').join('').trim();
-    if(out){try{localStorage.setItem(ck,out)}catch(e){} return out;}
-  }catch(e){}
-  return t;
-}
-async function translateEl(el){
-  if(!el||el.dataset.enDone)return;
-  const raw=el.textContent.trim(); if(!raw)return;
-  const out=await translate(raw); if(out&&out!==raw)el.textContent=out;
-  el.dataset.enDone='1';
-}
-async function translatePage(doc){
-  const map={
-    'Mykyu-system 토정비결':'Mykyu-system Personal Fortune',
-    '생년월일과 운세 연도를 바탕으로 전통 작괘 방식과 144괘 데이터를 연결해 개인별 결과를 제공합니다.':'Your birth date and the year you choose are used to create a personalized traditional Tojeong reading.',
-    '입력 방식':'Date Type','양력':'Solar Calendar','음력':'Lunar Calendar','출생년도':'Birth Year','출생월':'Birth Month','출생일':'Birth Day','윤달':'Leap Month','평달':'Regular Month','운세 연도':'Fortune Year','토정비결 보기':'Reveal My Fortune',
-    '올해 한 줄':'Your Year at a Glance','개인 맞춤 해석':'A Personal Reading','분야별 운세':'Life Areas','1~12월 운세':'Month by Month','올해의 실전 전략':'Your Practical Strategy','작괘 계산 검증':'Calculation Details','최종 판단':'Final Perspective',
-    '토정비결은 전통 운세 문화 콘텐츠입니다. 과학적 예측이 아니므로 의료·법률·투자·계약 등 중요한 결정은 객관적인 자료와 전문가의 판단을 우선하세요.':'Tojeong is a traditional fortune tradition, not a scientific prediction. For important medical, legal, financial, investment, or contractual decisions, use reliable information and professional advice as your first guide.',
-    '재물운':'Money & Finances','투자·재테크운':'Investing & Money Management','직업운':'Career','사업운':'Business','이직·취업운':'Job Change & Employment','승진·시험운':'Promotion & Exams','부동산운':'Property & Real Estate','문서·계약운':'Documents & Contracts','애정·가정운':'Love & Family','부부·결혼운':'Marriage & Partnership','가족·자녀운':'Family & Children','대인관계·귀인운':'Relationships & Helpful People','구설·갈등운':'Conflict & Misunderstandings','건강운':'Health','사고·주의운':'Risks & Cautions','이동·여행운':'Travel & Moves',
-    '길한 달':'More Favorable Months','주의 달':'Months to Handle Carefully','핵심 키워드':'Key Themes','당년 간지':'Year Sign','태세수':'Year Number','당년 생월 날수':'Lunar Month Days','월건':'Month Sign','당년 생일 일진':'Birth-day Sign','상괘':'Upper Trigram','중괘':'Middle Trigram','하괘':'Lower Trigram','최종 144괘':'Final 144 Gua'
-  };
-  doc.querySelectorAll('body *').forEach(el=>{if(el.children.length===0){const k=el.textContent.trim();if(map[k])el.textContent=map[k]}});
-  const btn=doc.getElementById('go'); if(btn)btn.textContent='Reveal My Fortune';
-  const mode=doc.getElementById('mode'); if(mode){mode.options[0].text='Solar Calendar';mode.options[1].text='Lunar Calendar';}
-  const labels=doc.querySelectorAll('label'); for(const el of labels){const k=el.textContent.trim();if(map[k])el.textContent=map[k]}
-}
-function addHeartLayer(doc){
-  if(doc.getElementById('heartLayer'))return;
-  const box=doc.createElement('section'); box.id='heartLayer'; box.className='card'; box.style.cssText='background:linear-gradient(135deg,#fbf9ff,#fff);border-color:#e8e1ff;margin-bottom:12px';
-  const h=doc.createElement('h2');h.textContent='What this may mean for you';box.appendChild(h);
-  const p=doc.createElement('div');p.id='heartText';p.className='summary';p.textContent='Once your reading appears, this space will put the result into plain, human language.';box.appendChild(p);
-  const result=doc.getElementById('result'); if(result&&result.parentNode)result.parentNode.insertBefore(box,result);
-}
-function updateHeart(doc){
-  const score=Number(doc.getElementById('sc')?.textContent?.replace(/\D/g,''))||0; const q=doc.getElementById('qn')?.textContent||'';const p=doc.getElementById('heartText');if(!p)return;
-  let t='Your reading points to a year where the important thing is not simply what happens, but how you choose to respond to it.';
-  if(score>=90)t=`This is a strong year for you. ${q?`Your ${q} reading carries real momentum.`:''} You may notice that opportunities appear more naturally, but the best results come when you choose one or two things that truly matter and follow them through. You do not need to prove everything at once.`;
-  else if(score>=80)t=`This looks like a steady, workable year. ${q?`The tone of your ${q} reading is encouraging.`:''} There may be good openings, but they reward patience more than impulsiveness. Keep what is working, make room for something better, and give important decisions a little breathing space.`;
-  else if(score>=70)t=`This is more of a balance-and-rebuild year. ${q?`Your ${q} reading suggests that preparation matters.`:''} You may have moments when progress feels slower than you hoped. That does not mean you are falling behind. Small, consistent choices can put you in a much stronger position later in the year.`;
-  else t=`This is a year to protect your energy and make thoughtful choices. ${q?`Your ${q} reading leans toward caution rather than speed.`:''} When life feels uncertain, it is easy to react too quickly. Slow down, reduce unnecessary risk, and give yourself permission to choose stability first.`;
-  p.textContent=t;
-}
-try{
-  let html=await fetch('./index.html?english='+Date.now(),{cache:'no-store'}).then(r=>r.text());
-  const inject=`<base href="https://mykyu-system.github.io/tojung-bikyul/"><style>body{background:#f7f7fb!important}h1,h2{letter-spacing:-.02em}.summary{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}</style>`;
-  html=html.replace('<head>','<head>'+inject);
-  frame.srcdoc=html;
-  frame.onload=async()=>{
-    const doc=frame.contentDocument;
-    await translatePage(doc); addHeartLayer(doc);
-    const btn=doc.getElementById('go');
-    if(btn){btn.addEventListener('click',async()=>{await wait(700);addHeartLayer(doc);updateHeart(doc);const els=[...doc.querySelectorAll('#sum,#personal,#fields .field p,#months .month p,#strategy,#fin')];for(const el of els)await translateEl(el);});}
-    setInterval(()=>{try{updateHeart(doc)}catch(e){}},1200);
-  };
-}catch(e){document.body.innerHTML='<p style="padding:24px;font-family:Arial">Unable to load the fortune calculator right now.</p>'}
+const map={'Mykyu-system 토정비결':'Mykyu-system Personal Fortune','생년월일과 운세 연도를 바탕으로 전통 작괘 방식과 144괘 데이터를 연결해 개인별 결과를 제공합니다.':'A gentle, personalized reflection based on your birth date and the year you choose.','입력 방식':'Date Type','양력':'Solar Calendar','음력':'Lunar Calendar','출생년도':'Birth Year','출생월':'Birth Month','출생일':'Birth Day','윤달':'Leap Month','平달':'Regular Month','평달':'Regular Month','운세 연도':'Fortune Year','토정비결 보기':'Reveal My Fortune','올해 한 줄':'Your Year at a Glance','개인 맞춤 해석':'A Personal Reading','분야별 운세':'Life Areas','1~12월 운세':'Month by Month','올해의 실전 전략':'Your Gentle Strategy','작괘 계산 검증':'Calculation Details','최종 판단':'Your Year-End Perspective','재물운':'Money & Finances','투자·재테크운':'Investing & Money Management','직업운':'Career','사업운':'Business','이직·취업운':'Career Change & New Work','승진·시험운':'Growth & Exams','부동산운':'Home & Property','문서·계약운':'Documents & Agreements','애정·가정운':'Love & Family','부부·결혼운':'Marriage & Partnership','가족·자녀운':'Family & Children','대인관계·귀인운':'Relationships & Support','구설·갈등운':'Conflict & Misunderstandings','건강운':'Wellbeing','사고·주의운':'Things to Handle Gently','이동·여행운':'Travel & Movement','길한 달':'More Favorable Months','주의 달':'Months to Move Carefully','핵심 키워드':'Key Themes','당년 간지':'Year Sign','태세수':'Year Number','당년 생월 날수':'Lunar Month Days','월건':'Month Sign','당년 생일 일진':'Birth-day Sign','상괘':'Upper Trigram','중괘':'Middle Trigram','하괘':'Lower Trigram','최종 144괘':'Final 144 Gua'};
+const translate=async t=>{t=(t||'').trim();if(!t||/^[\\x00-\\x7F]*$/.test(t))return t;try{const u='https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q='+encodeURIComponent(t);const a=await fetch(u).then(r=>r.json());return(a?.[0]||[]).map(x=>x?.[0]||'').join('').trim()||t}catch(e){return t}};
+function gentle(score,q){if(score>=90)return `You are entering a beautifully active chapter. ${q?`Your ${q} reading carries strong forward energy. `:''}Let yourself receive the opportunities that come your way, without feeling that you have to do everything at once. Choose what truly matters, take one step at a time, and allow your efforts to become something meaningful.`;if(score>=80)return `This year carries a calm and encouraging rhythm. ${q?`Your ${q} reading suggests steady progress. `:''}Good things may grow quietly rather than all at once. Give important choices a little time, protect your peace, and trust the progress you cannot always see immediately.`;if(score>=70)return `This is a year for grounding, healing, and rebuilding your strength. ${q?`Your ${q} reading reminds you that preparation has value. `:''}If progress sometimes feels slow, please do not mistake that for failure. Small steps count. Rest when you need to, keep what matters close, and let the next chapter arrive in its own time.`;return `This year gently asks you to protect your energy. ${q?`Your ${q} reading leans toward patience and careful choices. `:''}You do not have to rush through uncertainty. Simplify where you can, avoid unnecessary risks, and give yourself permission to choose peace and stability. A quieter season can still be a meaningful one.`}
+function addHeart(doc){if(doc.getElementById('gentleMessage'))return;const s=doc.createElement('section');s.id='gentleMessage';s.className='card';s.style.cssText='background:linear-gradient(135deg,#fffaff,#f8f6ff);border:1px solid #e9e1f5;border-radius:18px;padding:20px;margin:12px 0';s.innerHTML='<h2 style="margin-top:0">A Gentle Message for You</h2><div id="gentleText" class="summary">Your reading will appear here as a quiet moment of reflection.</div><p style="color:#777;line-height:1.7;margin-bottom:0">Take what feels meaningful to you and leave what does not. Your future is not fixed in stone. Your choices, care, and courage still matter.</p>';const r=doc.getElementById('result');if(r)r.parentNode.insertBefore(s,r)}
+async function localize(doc){doc.querySelectorAll('body *').forEach(e=>{if(e.children.length===0){const k=e.textContent.trim();if(map[k])e.textContent=map[k]}});const mode=doc.getElementById('mode');if(mode){mode.options[0].text='Solar Calendar';mode.options[1].text='Lunar Calendar'}const go=doc.getElementById('go');if(go)go.textContent='Reveal My Fortune'}
+async function translateResults(doc){const nodes=[...doc.querySelectorAll('#sum,#personal,#fields .field p,#months .month p,#strategy,#fin')];for(const e of nodes){if(e.dataset.en)return;const out=await translate(e.textContent);if(out)e.textContent=out;e.dataset.en='1'}}
+function refreshGentle(doc){const score=Number((doc.getElementById('sc')?.textContent||'').replace(/\\D/g,''))||0;const q=doc.getElementById('qn')?.textContent||'';const p=doc.getElementById('gentleText');if(p&&score)p.textContent=gentle(score,q)}
+try{let html=await fetch('./index.html?english='+Date.now(),{cache:'no-store'}).then(r=>r.text());html=html.replace('<head>','<head><base href="https://mykyu-system.github.io/tojung-bikyul/"><style>body{background:#faf9fc!important;color:#26313a!important}h1{font-size:30px!important}h2{letter-spacing:-.02em}.summary{line-height:1.85!important}</style>');frame.srcdoc=html;frame.onload=async()=>{const doc=frame.contentDocument;await localize(doc);addHeart(doc);const b=doc.getElementById('go');if(b)b.addEventListener('click',async()=>{await wait(600);await translateResults(doc);refreshGentle(doc)});setInterval(()=>{try{refreshGentle(doc)}catch(e){}},1000)}}catch(e){document.body.innerHTML='<div style="padding:30px;font-family:Arial">We are preparing your reading. Please try again in a moment.</div>'}
 })();</script></body></html>

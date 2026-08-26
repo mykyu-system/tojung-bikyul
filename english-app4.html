@@ -39,6 +39,8 @@ body{
   min-height:760px;
 }
 .fortune-art{
+  position:relative;
+  overflow:hidden;
   min-height:760px;
   background-color:#eadfc9;
   background-image:url('./assets/hojakdo-final.webp');
@@ -47,6 +49,18 @@ body{
   background-size:cover;
   border-right:1px solid rgba(106,75,145,.15);
 }
+
+.hojakdo-img{
+  position:absolute;
+  inset:0;
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:left top;
+  z-index:2;
+}
+
 .input-panel{
   position:relative;
   padding:34px 38px 34px;
@@ -235,7 +249,7 @@ body>.wrap>.note{
 </style></head><body><div class="wrap"><header><h1>Mykyu-system Personal Fortune</h1><div class="sub">A personalized traditional fortune reading based on your birth date and selected year, using a 144-reading system.</div></header>
 <section class="card input-card">
   <div class="input-shell">
-    <aside class="fortune-art" aria-label="Approved Hojakdo visual"></aside>
+    <aside class="fortune-art" aria-label="Approved Hojakdo visual"><img class="hojakdo-img" src="https://mykyu-system.github.io/tojung-bikyul/assets/hojakdo-final.webp?v=20260827-imgfix1" alt="Hojakdo tiger and gat-wearing magpie illustration"></aside>
     <div class="input-panel">
       <div class="privacy-top">▣ Your information is used only for this calculation and is not stored.</div>
       <div class="input-heading"><h2>Enter Your Information</h2></div>

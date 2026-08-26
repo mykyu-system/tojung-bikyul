@@ -6,84 +6,208 @@
 <style>
 body{margin:0;background:#f4f6f8;color:#18202a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}.wrap{max-width:980px;margin:auto;padding:18px 14px 50px}.card{background:#fff;border:1px solid #e4e7eb;border-radius:18px;padding:18px;margin:12px 0}h1{font-size:28px;margin:8px 0}h2{margin:0 0 10px}.sub,.note{color:#6b7280}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-size:13px;color:#6b7280;display:block;margin-bottom:6px}input,select,button{box-sizing:border-box;width:100%;height:44px;border-radius:11px;border:1px solid #e4e7eb;padding:0 12px;font-size:15px;background:#fff}button{background:#5848d8;color:#fff;border:0;font-weight:800;cursor:pointer;margin-top:12px}.hero{display:grid;grid-template-columns:1fr 180px;gap:14px;align-items:center}.badge,.pill{display:inline-block;padding:5px 9px;border-radius:999px;background:#eeeafd;color:#5848d8;font-size:12px;font-weight:700;margin:2px}.score{font-size:42px;font-weight:900;text-align:center}.grade{text-align:center;font-weight:800}.summary{font-size:17px;line-height:1.8}.table{width:100%;border-collapse:collapse}.table td{border-top:1px solid #e4e7eb;padding:9px 6px;vertical-align:top}.table td:first-child{color:#6b7280;width:38%}.fields,.monthgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{padding:12px 0;border-top:1px solid #e4e7eb}.field h3{margin:0 0 7px}.field p,.month p{line-height:1.6}.month{border:1px solid #e4e7eb;border-radius:15px;padding:14px}.bar{height:8px;background:#ececec;border-radius:10px;overflow:hidden;margin:9px 0}.bar i{display:block;height:100%;background:#5848d8}@media(max-width:700px){.grid,.fields,.monthgrid,.hero{grid-template-columns:1fr}.score,.grade{text-align:left}}
 
+
+
+
 /* INPUT_UI_START */
 .input-card{
   margin-top:24px;
-  padding:24px;
-  border:1px solid #e7e1ef;
-  border-radius:22px;
-  background:linear-gradient(180deg,#fffefd 0%,#fbf9ff 100%);
-  box-shadow:0 12px 32px rgba(60,45,90,.07);
+  padding:0;
+  overflow:hidden;
+  border:1px solid #e2d6e6;
+  border-radius:28px;
+  background:#fffaf5;
+  box-shadow:0 22px 60px rgba(47,30,67,.12);
+}
+.input-shell{
+  display:grid;
+  grid-template-columns:minmax(300px,.86fr) minmax(0,1.55fr);
+  min-height:590px;
+}
+.fortune-art{
+  position:relative;
+  min-height:590px;
+  overflow:hidden;
+  background:#e9dff0 url('./assets/hojakdo-modern.svg') center 46%/cover no-repeat;
+}
+.art-shade{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(34,24,48,.03) 0%,rgba(34,24,48,.05) 50%,rgba(30,20,42,.75) 100%);
+}
+.art-copy{
+  position:absolute;
+  z-index:2;
+  left:30px;
+  right:30px;
+  bottom:30px;
+  color:#fff;
+  text-shadow:0 2px 18px rgba(20,12,30,.32);
+}
+.art-kicker,
+.input-heading>span{
+  display:inline-block;
+  font-size:11px;
+  line-height:1;
+  letter-spacing:.18em;
+  font-weight:800;
+}
+.art-kicker{color:#f2d798}
+.art-copy h2{
+  margin:12px 0 10px;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:34px;
+  line-height:1.06;
+  letter-spacing:-.02em;
+}
+.art-copy p{
+  max-width:330px;
+  margin:0;
+  font-size:14px;
+  line-height:1.65;
+  color:rgba(255,255,255,.88);
+}
+.art-seal{
+  display:inline-block;
+  margin-top:18px;
+  padding:7px 10px;
+  border:1px solid rgba(242,215,152,.78);
+  border-radius:8px;
+  color:#f6dfa9;
+  font-size:10px;
+  letter-spacing:.14em;
+  font-weight:800;
+}
+.input-panel{
+  padding:38px 40px 34px;
+  background:
+    radial-gradient(circle at 90% 5%,rgba(113,83,154,.08),transparent 28%),
+    linear-gradient(180deg,#fffdf9 0%,#fbf7f3 100%);
+}
+.input-heading{
+  margin-bottom:28px;
+  text-align:center;
+}
+.input-heading>span{color:#8a6ba6}
+.input-heading h2{
+  margin:9px 0 7px;
+  color:#2c213b;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:30px;
+  letter-spacing:-.02em;
+}
+.input-heading p{
+  margin:0;
+  color:#84798c;
+  font-size:14px;
 }
 .input-card .grid{
   display:grid;
-  grid-template-columns:repeat(6,minmax(0,1fr));
-  gap:14px;
-}
-.input-card .grid>div{
-  grid-column:span 2;
-}
-.input-card #leapWrap{
-  grid-column:span 2;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px 14px;
 }
 .input-card label{
-  margin:0 0 7px;
+  margin:0 0 8px;
   font-size:12px;
-  font-weight:700;
-  color:#6e6579;
+  font-weight:800;
+  color:#58466e;
 }
 .input-card input,
 .input-card select{
-  height:50px;
-  padding:0 14px;
-  border:1px solid #ded8e8;
+  height:52px;
+  padding:0 15px;
+  border:1px solid #ded5df;
   border-radius:14px;
-  background:#fff;
-  color:#231f2b;
+  background:rgba(255,255,255,.92);
+  color:#2d2733;
   font-size:15px;
-  box-shadow:0 2px 8px rgba(50,40,70,.03);
-  transition:border-color .15s ease, box-shadow .15s ease;
+  box-shadow:0 3px 10px rgba(58,39,73,.035);
+  transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
 }
 .input-card input:focus,
 .input-card select:focus{
   outline:none;
-  border-color:#7b6be2;
-  box-shadow:0 0 0 4px rgba(123,107,226,.10);
+  border-color:#8668a6;
+  box-shadow:0 0 0 4px rgba(110,79,151,.10),0 5px 16px rgba(58,39,73,.06);
 }
 .input-card #go{
-  height:54px;
-  margin-top:18px;
-  border-radius:15px;
-  background:#6555d9;
-  font-size:15px;
-  font-weight:800;
-  box-shadow:0 10px 22px rgba(88,72,216,.18);
+  height:58px;
+  margin-top:22px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#694b8d 0%,#4f3a78 100%);
+  color:#fff9ef;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:18px;
+  letter-spacing:.01em;
+  font-weight:700;
+  box-shadow:0 13px 28px rgba(73,48,103,.24),inset 0 1px 0 rgba(255,255,255,.18);
 }
 .input-card #go:hover{
-  background:#5a4bc8;
+  background:linear-gradient(135deg,#76559a 0%,#574080 100%);
+  transform:translateY(-1px);
+}
+.privacy-note{
+  margin-top:13px;
+  text-align:center;
+  color:#968b9b;
+  font-size:11px;
+  line-height:1.5;
 }
 .input-card #err{
-  margin-top:10px;
-  min-height:18px;
+  margin-top:8px;
+  min-height:16px;
+  text-align:center;
 }
-@media(max-width:760px){
-  .input-card{padding:18px;border-radius:20px}
-  .input-card .grid>div,
-  .input-card #leapWrap{grid-column:span 3}
+@media(max-width:820px){
+  .input-shell{grid-template-columns:1fr}
+  .fortune-art{min-height:360px;background-position:center 42%}
+  .art-copy{left:24px;right:24px;bottom:24px}
+  .art-copy h2{font-size:30px}
+  .input-panel{padding:30px 24px}
 }
-@media(max-width:520px){
-  .input-card{padding:16px;border-radius:18px}
-  .input-card .grid{grid-template-columns:1fr;gap:12px}
-  .input-card .grid>div,
-  .input-card #leapWrap{grid-column:1}
-  .input-card input,
-  .input-card select{height:48px}
-  .input-card #go{height:52px}
+@media(max-width:560px){
+  .input-card{border-radius:22px}
+  .fortune-art{min-height:320px}
+  .input-panel{padding:26px 18px 24px}
+  .input-heading h2{font-size:26px}
+  .input-card .grid{grid-template-columns:1fr;gap:13px}
+  .input-card input,.input-card select{height:50px}
+  .input-card #go{height:55px;font-size:17px}
 }
 /* INPUT_UI_END */
 
 </style></head><body><div class="wrap"><header><h1>Mykyu-system Personal Fortune</h1><div class="sub">A personalized traditional fortune reading based on your birth date and selected year, using a 144-reading system.</div></header>
-<section class="card input-card"><div class="grid"><div><label>Date Type</label><select id="mode"><option value="solar">Solar Calendar</option><option value="lunar">Lunar Calendar</option></select></div><div><label>Birth Year</label><input id="by" type="number" min="1900" max="2050"></div><div><label>Birth Month</label><select id="bm"></select></div><div><label>Birth Day</label><input id="bd" type="number" min="1" max="31"></div><div id="leapWrap" style="display:none"><label>Leap Month</label><select id="leap"><option value="0">Regular Month</option><option value="1">Leap Month</option></select></div><div><label>Fortune Year</label><input id="ty" type="number" min="1900" max="2050" value="2026"></div></div><button id="go">Reveal My Fortune</button><div id="err" class="note"></div></section>
+<section class="card input-card">
+  <div class="input-shell">
+    <aside class="fortune-art" aria-label="Korean folk-art inspired fortune illustration">
+      <div class="art-shade"></div>
+      <div class="art-copy">
+        <span class="art-kicker">KOREAN FOLK FORTUNE</span>
+        <h2>Your year,<br>revealed in 144 readings.</h2>
+        <p>A modern reading rooted in the traditional Tojeong Bikyeol system.</p>
+        <span class="art-seal">MYKYU · 144</span>
+      </div>
+    </aside>
+    <div class="input-panel">
+      <div class="input-heading">
+        <span>PERSONAL READING</span>
+        <h2>Enter Your Information</h2>
+        <p>Choose your birth date and the year you want to explore.</p>
+      </div>
+      <div class="grid">
+        <div><label>Date Type</label><select id="mode"><option value="solar">Solar Calendar</option><option value="lunar">Lunar Calendar</option></select></div>
+        <div><label>Birth Year</label><input id="by" type="number" min="1900" max="2050"></div>
+        <div><label>Birth Month</label><select id="bm"></select></div>
+        <div><label>Birth Day</label><input id="bd" type="number" min="1" max="31"></div>
+        <div id="leapWrap" style="display:none"><label>Leap Month</label><select id="leap"><option value="0">Regular Month</option><option value="1">Leap Month</option></select></div>
+        <div><label>Fortune Year</label><input id="ty" type="number" min="1900" max="2050" value="2026"></div>
+      </div>
+      <button id="go">✦ Reveal My Fortune</button>
+      <div class="privacy-note">Your information is used only for this calculation and is not stored.</div>
+      <div id="err" class="note"></div>
+    </div>
+  </div>
+</section>
 <section id="result" style="display:none"><div class="card hero"><div><span id="q" class="badge"></span><h2 id="qn"></h2><div id="meta" class="sub"></div></div><div><div id="sc" class="score"></div><div id="gr" class="grade"></div></div></div><div class="card"><h2>Your Year at a Glance</h2><div id="sum" class="summary"></div><div id="keywords"></div></div><div class="card"><h2>Personal Interpretation</h2><div id="personal" class="summary"></div><table class="table" id="personalTable"></table></div><div class="card"><h2>Life Areas</h2><div id="fields" class="fields"></div></div><div class="card"><h2>Month by Month</h2><div id="months" class="monthgrid"></div></div><div class="card"><h2>Practical Strategy</h2><div id="strategy" class="summary"></div><div id="strategyTags"></div></div><div class="card"><h2>Calculation Details</h2><table class="table" id="calcinfo"></table></div><div class="card"><h2>Final Perspective</h2><div id="fin" class="summary"></div><table class="table" id="last"></table></div></section><div class="note">This is traditional cultural fortune content for reflection and entertainment. It is not a scientific prediction. For medical, legal, investment, financial, or contractual decisions, rely on objective information and qualified professional advice.</div></div>
 <script>
 let APP=null;const $=id=>document.getElementById(id),rem=(n,m)=>{let r=n%m;return r===0?m:r},esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const STEM=['Jia','Yi','Bing','Ding','Wu','Ji','Geng','Xin','Ren','Gui'],BRANCH=['Zi','Chou','Yin','Mao','Chen','Si','Wu','Wei','Shen','You','Xu','Hai'],CYCLE=Array.from({length:60},(_,i)=>STEM[i%10]+'-'+BRANCH[i%12]);const ZODIAC={Zi:'Rat',Chou:'Ox',Yin:'Tiger',Mao:'Rabbit',Chen:'Dragon',Si:'Snake',Wu:'Horse',Wei:'Goat',Shen:'Monkey',You:'Rooster',Xu:'Dog',Hai:'Pig'};const zodiacName=v=>{const b=String(v??'').split('-').pop();return ZODIAC[b]||String(v??'')};const readingName=v=>String(v??'').replace(/\bGua\b/gi,'Reading');for(let i=1;i<=12;i++)$('bm').insertAdjacentHTML('beforeend',`<option value="${i}">${i}</option>`);$('mode').onchange=()=>{$('leapWrap').style.display=$('mode').value==='lunar'?'block':'none';$('bd').max=$('mode').value==='lunar'?30:31};

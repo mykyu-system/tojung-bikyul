@@ -1,0 +1,27 @@
+name: Patch Legacy Blogger Route
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/patch_blogger_route.py'
+      - '.github/workflows/patch-blogger-route.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: "!contains(github.event.head_commit.message, '[skip blogger-route]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Patch legacy Blogger route
+        run: python scripts/patch_blogger_route.py
+      - name: Commit route patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Route legacy Blogger index to English app [skip blogger-route]'
+          git push

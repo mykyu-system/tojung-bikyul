@@ -1,0 +1,29 @@
+name: Build English Fortune Data
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Mykyu-system_TOJEONG_100_FINAL.json'
+      - 'english.html'
+      - 'scripts/build_english_data.py'
+      - '.github/workflows/build-english.yml'
+permissions:
+  contents: write
+jobs:
+  build:
+    if: "!contains(github.event.head_commit.message, '[skip en-build]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Build English data
+        run: python scripts/build_english_data.py
+      - name: Commit generated English data
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/en
+          git diff --cached --quiet || git commit -m 'Build English 144-Gua data [skip en-build]'
+          git push

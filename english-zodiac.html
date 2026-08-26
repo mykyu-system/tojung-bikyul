@@ -7,14 +7,39 @@
 <style>html,body{margin:0;background:#f3ecdf}iframe{display:block;width:100%;height:100vh;min-height:980px;border:0}</style>
 </head>
 <body>
-<iframe id="app" src="./english-app4.html?v=20260827-design3" title="Mykyu System Personal Fortune" loading="eager"></iframe>
+<iframe id="app" src="./english-app4.html?v=20260827-design4" title="Mykyu System Personal Fortune" loading="eager"></iframe>
 <script>
 const app=document.getElementById('app');
 const tiger=`<svg viewBox="0 0 620 650" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="ink" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#292337"/><stop offset="1" stop-color="#6f6256"/></linearGradient></defs><circle cx="360" cy="150" r="130" fill="#d9c6a1" opacity=".55"/><path d="M0 610 Q110 480 220 570 T430 500 T620 540 V650 H0Z" fill="#8a8177" opacity=".42"/><path d="M30 625 Q125 515 215 590 Q300 500 390 585 Q500 480 620 570" fill="none" stroke="#4b4550" stroke-width="18" opacity=".7"/><g transform="translate(260 60) rotate(-5)"><path d="M80 80 C120 10 225 8 285 80 L310 145 C315 250 260 355 180 405 C105 360 55 270 58 170Z" fill="#d9d1c5" stroke="#332d36" stroke-width="8"/><path d="M72 98 L30 35 L115 62 M280 90 L340 40 L250 68" fill="#c7beb1" stroke="#332d36" stroke-width="8"/><path d="M104 115 Q145 75 185 120 M225 118 Q265 75 295 120" fill="none" stroke="#332d36" stroke-width="18"/><ellipse cx="145" cy="185" rx="26" ry="32" fill="#d8a63b" stroke="#332d36" stroke-width="6"/><ellipse cx="240" cy="185" rx="26" ry="32" fill="#d8a63b" stroke="#332d36" stroke-width="6"/><circle cx="145" cy="190" r="9"/><circle cx="240" cy="190" r="9"/><path d="M92 150 Q125 135 148 150 M236 150 Q268 135 292 150" fill="none" stroke="#332d36" stroke-width="9"/><path d="M168 238 Q190 220 214 238 L204 270 Q190 284 176 270Z" fill="#493d45"/><path d="M180 270 Q190 292 215 270" fill="none" stroke="#332d36" stroke-width="7"/><path d="M85 240 Q45 220 30 190 M92 260 Q45 255 22 235 M295 240 Q335 220 350 190 M290 260 Q340 255 360 235" fill="none" stroke="#554b50" stroke-width="5"/><path d="M120 88 L150 145 M175 65 L185 140 M225 65 L215 140 M270 88 L245 145 M110 295 L145 250 M155 325 L175 255 M270 325 L245 255 M300 295 L270 250" stroke="#4c4148" stroke-width="16" opacity=".85"/><path d="M80 170 L125 205 M80 210 L125 225 M295 205 L335 170 M295 225 L340 210" stroke="#4c4148" stroke-width="12"/></g></svg>`;
+function translateGua(){
+ const d=app.contentDocument; if(!d||!d.body)return;
+ const replacements=[
+  [/Upper\s+Gua/gi,'Upper Trigram'],
+  [/Middle\s+Gua/gi,'Middle Trigram'],
+  [/Lower\s+Gua/gi,'Lower Trigram'],
+  [/Final\s+144\s+Gua/gi,'Final Reading'],
+  [/Final\s+Gua/gi,'Final Reading'],
+  [/Gua\s+Code/gi,'Reading Code'],
+  [/Gua\s+Name/gi,'Reading Name'],
+  [/Gua\s+Number/gi,'Reading Number'],
+  [/Gua\s+Result/gi,'Reading Result'],
+  [/Gua\s+Details/gi,'Reading Details'],
+  [/Gua\s+Interpretation/gi,'Reading Interpretation'],
+  [/Gua\s+Meaning/gi,'Reading Meaning'],
+  [/Gua\s+Type/gi,'Reading Type'],
+  [/Gua\s+Title/gi,'Reading Title'],
+  [/Gua\s+Index/gi,'Reading Index'],
+  [/Gua/gi,'Reading']
+ ];
+ const walker=d.createTreeWalker(d.body,NodeFilter.SHOW_TEXT);
+ const nodes=[]; let n; while(n=walker.nextNode())nodes.push(n);
+ nodes.forEach(node=>{if(!node.parentElement||['SCRIPT','STYLE','TEXTAREA'].includes(node.parentElement.tagName))return;let s=node.nodeValue;let out=s;for(const [re,to] of replacements)out=out.replace(re,to);if(out!==s)node.nodeValue=out;});
+ d.querySelectorAll('[aria-label],[title],[placeholder]').forEach(el=>['aria-label','title','placeholder'].forEach(a=>{if(el.hasAttribute(a)){let s=el.getAttribute(a);for(const [re,to] of replacements)s=s.replace(re,to);el.setAttribute(a,s);}}));
+}
 function enhance(){
  const d=app.contentDocument; if(!d||!d.head||!d.body)return;
- if(d.getElementById('mykyu-design3'))return;
- const style=d.createElement('style'); style.id='mykyu-design3';
+ if(d.getElementById('mykyu-design4')){translateGua();return;}
+ const style=d.createElement('style'); style.id='mykyu-design4';
  style.textContent=`
  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
  :root{--ink:#201a2d;--purple:#241b38;--gold:#b58a3b;--cream:#f5eee2;--paper:#fbf7ef;--line:#d9cdbd;--muted:#6f665e}
@@ -61,8 +86,10 @@ function enhance(){
  d.body.prepend(side);
  const h=d.querySelector('header .sub'); if(h) h.textContent='A thoughtful reading based on traditional East Asian fortune principles, prepared for modern life.';
  const go=d.getElementById('go'); if(go) go.textContent='Reveal My Fortune';
+ translateGua();
+ const obs=new MutationObserver(()=>translateGua()); obs.observe(d.body,{subtree:true,childList:true,characterData:true});
 }
-app.addEventListener('load',enhance); setTimeout(enhance,1200);
+app.addEventListener('load',enhance); setTimeout(enhance,1200); setInterval(translateGua,700);
 </script>
 </body>
 </html>

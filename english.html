@@ -7,6 +7,50 @@
 <style>html,body{margin:0;padding:0;background:#f3ecdf}iframe{display:block;width:100%;height:100vh;min-height:980px;border:0}</style>
 </head>
 <body>
-<iframe id="app" src="./english-final.html?v=20260827-zodiacanimals2" title="Mykyu System Personal Fortune" loading="eager"></iframe>
+<iframe id="app" src="./english-final.html?v=20260827-zodiacanimals3" title="Mykyu System Personal Fortune" loading="eager"></iframe>
+<script>
+const rootFrame=document.getElementById('app');
+const animals={Zi:'Rat',Chou:'Ox',Yin:'Tiger',Mao:'Rabbit',Chen:'Dragon',Si:'Snake',Wu:'Horse',Wei:'Goat',Shen:'Monkey',You:'Rooster',Xu:'Dog',Hai:'Pig'};
+const cycleRe=/\b(?:Jia|Yi|Bing|Bin|Ding|Wu|Ji|Geng|Xin|Ren|Gui)\s*[-–—]\s*(Zi|Chou|Yin|Mao|Chen|Si|Wu|Wei|Shen|You|Xu|Hai)\b/gi;
+function cleanText(s){
+ if(!s)return s;
+ return s.replace(cycleRe,(_,branch)=>animals[branch]||branch)
+ .replace(/Upper\s+Gua/gi,'Upper Trigram')
+ .replace(/Middle\s+Gua/gi,'Middle Trigram')
+ .replace(/Lower\s+Gua/gi,'Lower Trigram')
+ .replace(/Final\s+144\s+Gua/gi,'Final Reading')
+ .replace(/Final\s+Gua/gi,'Final Reading')
+ .replace(/Gua\s+Code/gi,'Reading Code')
+ .replace(/Gua\s+Name/gi,'Reading Name')
+ .replace(/Gua\s+Number/gi,'Reading Number')
+ .replace(/Gua\s+Result/gi,'Reading Result')
+ .replace(/Gua\s+Details/gi,'Reading Details')
+ .replace(/Gua\s+Interpretation/gi,'Reading Interpretation')
+ .replace(/Gua\s+Meaning/gi,'Reading Meaning')
+ .replace(/Gua\s+Type/gi,'Reading Type')
+ .replace(/Gua\s+Title/gi,'Reading Title')
+ .replace(/Gua\s+Index/gi,'Reading Index')
+ .replace(/\bGua\b/gi,'Reading');
+}
+function cleanDoc(doc){
+ if(!doc||!doc.body)return;
+ const w=doc.createTreeWalker(doc.body,NodeFilter.SHOW_TEXT),nodes=[];let n;
+ while(n=w.nextNode())nodes.push(n);
+ for(const node of nodes){
+  if(!node.parentElement||['SCRIPT','STYLE','TEXTAREA'].includes(node.parentElement.tagName))continue;
+  const out=cleanText(node.nodeValue); if(out!==node.nodeValue)node.nodeValue=out;
+ }
+ doc.querySelectorAll('[title],[aria-label],[placeholder]').forEach(el=>['title','aria-label','placeholder'].forEach(a=>{if(el.hasAttribute(a))el.setAttribute(a,cleanText(el.getAttribute(a)))}));
+ if(!doc.__mykyuObs){doc.__mykyuObs=new MutationObserver(()=>cleanDoc(doc));doc.__mykyuObs.observe(doc.body,{subtree:true,childList:true,characterData:true});}
+ for(const f of doc.querySelectorAll('iframe')){
+  try{if(f.contentDocument){cleanDoc(f.contentDocument);if(!f.__mykyuLoad){f.__mykyuLoad=true;f.addEventListener('load',()=>deepSweep());}}}catch(e){}
+ }
+}
+function deepSweep(){
+ try{if(rootFrame.contentDocument)cleanDoc(rootFrame.contentDocument);}catch(e){}
+}
+rootFrame.addEventListener('load',()=>{deepSweep();[100,300,700,1200,2500,5000].forEach(t=>setTimeout(deepSweep,t));});
+setInterval(deepSweep,500);
+</script>
 </body>
 </html>

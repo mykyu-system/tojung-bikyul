@@ -13,12 +13,21 @@ html,body{margin:0;padding:0;background:#efe5d3;overflow-x:hidden}
 </style>
 </head>
 <body>
-<iframe id="shell" src="./english-v2.html?v=20260828-center1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="shell" src="./english-v2.html?v=20260828-center2" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const shell=document.getElementById('shell');
 const CELL={Rat:[0,0],Ox:[1,0],Tiger:[2,0],Rabbit:[3,0],Dragon:[0,1],Snake:[1,1],Horse:[2,1],Goat:[3,1],Monkey:[0,2],Rooster:[1,2],Dog:[2,2],Pig:[3,2]};
-// Per-animal visual-center correction measured from the 96x96 sprite cells.
-const SHIFT={Rat:[-2,-7],Ox:[5,-5],Tiger:[1,-7],Rabbit:[0,-3],Dragon:[-3,-5],Snake:[-6,-10],Horse:[-7,-7],Goat:[-8,-12],Monkey:[-8,-5],Rooster:[-15,-7],Dog:[-16,-7],Pig:[-18,-9]};
+// Visual-center correction after the animal art is inset inside a circular safe area.
+const SHIFT={
+ Rat:[-1,-3],Ox:[3,-2],Tiger:[0,-4],Rabbit:[0,-2],
+ Dragon:[-2,-3],Snake:[-3,-5],Horse:[-3,-4],Goat:[-4,-5],
+ Monkey:[-4,-2],Rooster:[-6,-3],Dog:[-3,-3],Pig:[-5,-4]
+};
+// Per-animal scale. Large/long silhouettes get a little more breathing room.
+const SCALE={
+ Rat:.84,Ox:.82,Tiger:.80,Rabbit:.84,Dragon:.80,Snake:.78,
+ Horse:.80,Goat:.79,Monkey:.80,Rooster:.79,Dog:.76,Pig:.81
+};
 let tiles=null,patchStarted=false,heightTimer=null;
 function deep(){
   try{
@@ -48,14 +57,36 @@ function makeTiles(sprite){
       const result={};
       for(const [name,[c,r]] of Object.entries(CELL)){
         const canvas=document.createElement('canvas');
-        canvas.width=192;canvas.height=192;
+        canvas.width=240;canvas.height=240;
         const ctx=canvas.getContext('2d');
-        ctx.fillStyle='#f5ead6';ctx.fillRect(0,0,192,192);
-        const inset=2,sx=c*sw+inset,sy=r*sh+inset,cw=sw-inset*2,ch=sh-inset*2;
+
+        // The delivered art is square, but the UI frame is circular. Build a real circular tile
+        // with a paper-colored safety margin so ears, feet and tails never hit the frame.
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(120,120,116,0,Math.PI*2);
+        ctx.clip();
+        ctx.fillStyle='#f3e7d1';
+        ctx.fillRect(0,0,240,240);
+
+        const inset=3;
+        const sx=c*sw+inset,sy=r*sh+inset,cw=sw-inset*2,ch=sh-inset*2;
+        const scale=SCALE[name]||.82;
+        const size=240*scale;
         const [dx,dy]=SHIFT[name]||[0,0];
-        const dw=184,dh=184,baseX=4,baseY=4;
-        ctx.drawImage(img,sx,sy,cw,ch,baseX+dx*2,baseY+dy*2,dw,dh);
-        result[name]=canvas.toDataURL('image/webp',.92);
+        const x=(240-size)/2+dx*2;
+        const y=(240-size)/2+dy*2;
+        ctx.drawImage(img,sx,sy,cw,ch,x,y,size,size);
+
+        // Soft paper vignette disguises the old square cell boundary and blends it into the round frame.
+        const g=ctx.createRadialGradient(120,112,70,120,120,118);
+        g.addColorStop(0,'rgba(243,231,209,0)');
+        g.addColorStop(.82,'rgba(243,231,209,0.03)');
+        g.addColorStop(1,'rgba(243,231,209,0.72)');
+        ctx.fillStyle=g;ctx.fillRect(0,0,240,240);
+        ctx.restore();
+
+        result[name]=canvas.toDataURL('image/webp',.94);
       }
       resolve(result);
     };
@@ -70,10 +101,12 @@ function applyOne(doc,nameId,targetId){
     if(!tiles||!tiles[name])return;
     target.textContent='';
     target.style.backgroundImage=`url("${tiles[name]}")`;
-    target.style.backgroundSize='cover';
+    target.style.backgroundSize='100% 100%';
     target.style.backgroundPosition='center center';
     target.style.backgroundRepeat='no-repeat';
-    target.style.backgroundColor='#f5ead6';
+    target.style.backgroundColor='#f3e7d1';
+    target.style.borderRadius='50%';
+    target.style.overflow='hidden';
     target.setAttribute('aria-label',name+' centered minhwa animal illustration');
   });
   render();

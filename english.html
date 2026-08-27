@@ -10,9 +10,20 @@
 <style>html,body{margin:0;padding:0;background:#efe5d3}iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;background:#efe5d3}</style>
 </head>
 <body>
-<iframe id="app" src="./english-app7.html?v=20260827-mockup1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260827-mockup2" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
+app.addEventListener('load',()=>{
+  try{
+    const doc=app.contentDocument;
+    const img=doc&&doc.getElementById('folkArt');
+    if(img){
+      img.src='./assets/mockup-left.webp?v=20260827-exact1';
+      img.style.objectFit='cover';
+      img.style.objectPosition='center top';
+    }
+  }catch(e){console.error(e)}
+});
 window.addEventListener('message',e=>{
   if(!e.data||e.data.type!=='TOJEONG_HEIGHT')return;
   app.style.height=Math.max(1000,Math.min(14000,Number(e.data.height)||1900))+'px';

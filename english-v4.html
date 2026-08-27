@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Tojung Bi Kyul — Round Zodiac Medallions</title>
+<style>
+html,body{margin:0;padding:0;background:#efe5d3;overflow-x:hidden}
+#shell{display:block;width:100%;height:1900px;min-height:100vh;border:0;background:#efe5d3}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./english-v2.html?v=20260828-round3" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<script>
+'use strict';
+const shell=document.getElementById('shell');
+const POS={
+ Rat:[0,0],Ox:[1,0],Tiger:[2,0],Rabbit:[3,0],
+ Dragon:[0,1],Snake:[1,1],Horse:[2,1],Goat:[3,1],
+ Monkey:[0,2],Rooster:[1,2],Dog:[2,2],Pig:[3,2]
+};
+let spritePromise=null,started=false,heightTimer=null;
+
+async function buildSprite(){
+  if(spritePromise)return spritePromise;
+  spritePromise=(async()=>{
+    const parts=[];
+    for(let i=0;i<5;i++){
+      const r=await fetch(`./assets/zodiac-round-v3.b64.${i}?v=20260828-round3`,{cache:'no-store'});
+      if(!r.ok)throw new Error('round zodiac part '+i+' failed');
+      parts.push((await r.text()).replace(/\s+/g,''));
+    }
+    const joined=parts.join('');
+    if(joined.length!==42436)throw new Error('round zodiac length mismatch: '+joined.length);
+    return 'data:image/webp;base64,'+joined;
+  })();
+  return spritePromise;
+}
+
+function deep(){
+  try{
+    const outer=shell.contentDocument;
+    const app=outer&&outer.getElementById('app');
+    return {outer,app,doc:app&&app.contentDocument};
+  }catch(e){return {outer:null,app:null,doc:null}}
+}
+
+function syncHeight(){
+  try{
+    const outer=shell.contentDocument;
+    if(!outer)return;
+    const h=Math.max(1000,outer.body?.scrollHeight||0,outer.documentElement?.scrollHeight||0);
+    shell.style.height=Math.min(14000,h)+'px';
+  }catch(e){}
+}
+
+function installStyle(doc){
+  if(doc.getElementById('round-zodiac-v3-style'))return;
+  const s=doc.createElement('style');
+  s.id='round-zodiac-v3-style';
+  s.textContent=`
+    .zodiac-circle{background:#f6ead7!important;overflow:hidden!important}
+    .zodiac-circle:after{display:none!important}
+    .zodiac-emoji{
+      width:132px!important;height:132px!important;
+      border-radius:50%!important;
+      background-color:transparent!important;
+      background-repeat:no-repeat!important;
+      box-shadow:none!important;filter:none!important;
+      overflow:visible!important
+    }
+    @media(max-width:1000px){.zodiac-emoji{width:124px!important;height:124px!important}}
+    @media(max-width:640px){.zodiac-emoji{width:124px!important;height:124px!important}}
+  `;
+  doc.head.appendChild(s);
+}
+
+function bindAnimal(doc,sprite,nameId,targetId){
+  const nameEl=doc.getElementById(nameId),target=doc.getElementById(targetId);
+  if(!nameEl||!target)return;
+  const render=()=>requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    const name=(nameEl.textContent||'').trim();
+    const p=POS[name];
+    if(!p)return;
+    target.textContent='';
+    target.style.backgroundImage=`url("${sprite}")`;
+    target.style.backgroundSize='400% 300%';
+    target.style.backgroundPosition=`${p[0]*100/3}% ${p[1]*50}%`;
+    target.style.backgroundRepeat='no-repeat';
+    target.style.backgroundColor='transparent';
+    target.setAttribute('aria-label',name+' complete round minhwa zodiac medallion');
+  }));
+  render();
+  new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
+}
+
+async function start(){
+  if(started)return;
+  const {outer,app,doc}=deep();
+  if(!outer||!app||!doc){setTimeout(start,80);return}
+  started=true;
+  installStyle(doc);
+  try{
+    const sprite=await buildSprite();
+    bindAnimal(doc,sprite,'yearZodiac','yearEmoji');
+    bindAnimal(doc,sprite,'dayZodiac','dayEmoji');
+  }catch(e){console.error('round zodiac medallions',e)}
+  try{
+    const ro=new ResizeObserver(syncHeight);
+    ro.observe(outer.documentElement);
+    if(outer.body)ro.observe(outer.body);
+  }catch(e){}
+  syncHeight();
+  heightTimer=setInterval(syncHeight,600);
+}
+
+shell.addEventListener('load',()=>{
+  started=false;
+  spritePromise=null;
+  if(heightTimer){clearInterval(heightTimer);heightTimer=null}
+  start();
+  syncHeight();
+});
+window.addEventListener('beforeunload',()=>{if(heightTimer)clearInterval(heightTimer)});
+</script>
+</body>
+</html>

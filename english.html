@@ -6,95 +6,16 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Mykyu System — Personal Fortune</title>
-<style>
-html,body{margin:0;padding:0;background:#eee2cf}
-iframe{display:block;width:100%;height:1500px;min-height:100vh;border:0;background:#eee2cf}
-</style>
+<title>Tojung Bi Kyul — 144 Readings Fortune Calculator</title>
+<style>html,body{margin:0;padding:0;background:#efe5d3}iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;background:#efe5d3}</style>
 </head>
 <body>
-<iframe id="app" src="./english-app5.html?v=20260827-premium6" title="Mykyu System Personal Fortune" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260827-mockup1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
-const PREMIUM_CSS=`
-:root{--p-ink:#241744;--p-purple:#4b2679;--p-purple2:#7653a2;--p-paper:#fffaf2;--p-line:#d8c6ad;--p-gold:#9b7842;--p-shadow:0 22px 60px rgba(55,36,71,.14)}
-html,body{background:#eee2cf!important;color:#342b39!important}
-.wrap{max-width:1180px!important;padding:16px 14px 52px!important}
-.paper{border:1px solid #c9b294!important;border-radius:28px!important;background:linear-gradient(180deg,#fffaf1 0%,#f8efdf 100%)!important;box-shadow:var(--p-shadow)!important}
-.input-shell{grid-template-columns:minmax(335px,.88fr) minmax(0,1.5fr)!important;min-height:730px!important}
-.art{min-height:730px!important;background:#eadcc5!important;border-right:1px solid rgba(76,47,104,.16)!important}
-.art img{object-fit:cover!important;object-position:center top!important;filter:saturate(.96) contrast(1.01)!important}
-.panel{padding:31px 37px 32px!important;background:radial-gradient(circle at 86% 3%,rgba(111,76,153,.07),transparent 24%),linear-gradient(180deg,rgba(255,253,249,.97),rgba(252,247,238,.98))!important}
-.privacy{color:#625b63!important;margin-bottom:25px!important}
-.heading{margin-bottom:28px!important}
-.heading h1{color:var(--p-ink)!important;font:700 35px/1.15 Georgia,'Times New Roman',serif!important;letter-spacing:-.02em!important}
-.heading h1:before,.heading h1:after{content:'☁'!important;color:#815fac!important;font-size:22px!important;margin:0 15px!important;font-weight:400!important}
-.heading p{color:#736b72!important;line-height:1.55!important}
-.grid{gap:18px 14px!important;padding:21px!important;border:1px solid #ddd0c0!important;border-radius:19px!important;background:rgba(255,255,255,.5)!important;box-shadow:inset 0 1px rgba(255,255,255,.6)!important}
-label{color:#503078!important;font-weight:800!important}
-input,select{height:51px!important;border:1px solid #d7ccc1!important;border-radius:10px!important;background:#fffdf9!important;color:#39343e!important}
-input:focus,select:focus{border-color:#7c5aa4!important;box-shadow:0 0 0 3px rgba(102,70,143,.1)!important}
-#go{height:66px!important;border:1px solid #a07ec0!important;border-radius:13px!important;background:linear-gradient(180deg,#674092 0%,#45236f 100%)!important;color:#fff9ec!important;font:700 21px Georgia,'Times New Roman',serif!important;box-shadow:0 11px 24px rgba(67,35,111,.23),inset 0 0 0 1px rgba(255,255,255,.14)!important;letter-spacing:.01em!important}
-#go:not(:disabled):hover{filter:brightness(1.055)!important}
-.status{color:#6a646b!important}
-.result{position:relative!important;margin-top:20px!important;padding:22px!important;border:1px solid #c9b294!important;border-radius:28px!important;background:radial-gradient(circle at 50% -8%,rgba(129,95,172,.08),transparent 25%),linear-gradient(180deg,#fffaf2,#f7ecda)!important;box-shadow:var(--p-shadow)!important}
-.result:before,.result:after{content:''!important;position:absolute!important;top:14px!important;width:46px!important;height:46px!important;border-color:#b69055!important;opacity:.72!important;pointer-events:none!important}
-.result:before{left:14px!important;border-left:1px solid!important;border-top:1px solid!important;border-radius:14px 0 0 0!important}
-.result:after{right:14px!important;border-right:1px solid!important;border-top:1px solid!important;border-radius:0 14px 0 0!important}
-.result-title{margin:5px 0 21px!important;color:var(--p-ink)!important;font:700 31px/1.15 Georgia,'Times New Roman',serif!important;text-align:center!important}
-.result-title:before,.result-title:after{content:'☁'!important;color:#815fac!important;font-size:21px!important;margin:0 13px!important;font-weight:400!important}
-.overview{grid-template-columns:1.05fr 1.05fr 1.3fr 1.45fr!important;gap:12px!important}
-.result-card{border:1px solid #ddcdb9!important;border-radius:18px!important;background:rgba(255,252,247,.93)!important;padding:18px!important;box-shadow:0 8px 24px rgba(55,36,71,.06)!important}
-.result-card h2,.result-card h3{color:var(--p-ink)!important;font-family:Georgia,'Times New Roman',serif!important}
-.eyebrow{color:#6f4a96!important;font-size:10px!important;font-weight:900!important;letter-spacing:.1em!important}
-.big{color:#2b1d51!important;font-family:Georgia,'Times New Roman',serif!important}
-.badge,.pill{background:#eee3f5!important;color:#59347e!important;border:1px solid rgba(102,70,143,.08)!important}
-.tri{border:1px solid #e0d2c2!important;border-radius:13px!important;background:#f7eddf!important;padding:10px 6px!important}
-.tri b{color:#33204f!important}
-.hero-reading{margin-top:12px!important;padding:22px!important;border-color:#c8b0dc!important;background:linear-gradient(135deg,rgba(255,253,248,.98),rgba(248,239,225,.97))!important}
-.reading-name{color:#28184d!important;font:700 31px/1.15 Georgia,'Times New Roman',serif!important}
-.summary{color:#463e48!important;font-size:15px!important;line-height:1.78!important}
-.score{display:grid!important;place-items:center!important;width:132px!important;height:132px!important;margin:0 auto!important;border-radius:50%!important;background:radial-gradient(circle,#fffaf2 57%,#eee1d0 58%,#eee1d0 62%,#5d3786 63%,#5d3786 66%,#fffaf2 67%)!important;color:#412169!important;font-size:26px!important;line-height:1!important;box-shadow:0 8px 25px rgba(60,37,78,.09)!important}
-.grade{text-align:center!important;margin-top:9px!important;color:#3c2859!important;font:700 18px Georgia,'Times New Roman',serif!important}
-.sections{gap:11px!important;margin-top:13px!important}
-.area{position:relative!important;border:1px solid #ded0bf!important;border-radius:16px!important;background:#fffaf3!important;padding:18px 17px 18px 21px!important;box-shadow:0 5px 16px rgba(55,36,71,.035)!important}
-.area:before{content:''!important;position:absolute!important;left:0!important;top:16px!important;bottom:16px!important;width:3px!important;border-radius:3px!important;background:#7653a2!important}
-.area h3{color:#2f1d54!important;font:700 18px Georgia,'Times New Roman',serif!important}
-.area p{color:#4e4650!important;font-size:13px!important;line-height:1.72!important}
-.months{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}
-.month{border:1px solid #ded0bf!important;border-radius:15px!important;background:#fffaf2!important;padding:14px!important;box-shadow:0 5px 16px rgba(55,36,71,.03)!important}
-.month-head b{color:#38235f!important;font-family:Georgia,'Times New Roman',serif!important}
-.month-head span{color:#6d6470!important;font-weight:800!important}
-.bar{height:7px!important;background:#e9ddd0!important}
-.bar i{background:linear-gradient(90deg,#7653a2,#4a2679)!important}
-.month p{color:#5c555d!important;font-size:11.5px!important;line-height:1.55!important}
-.calc{background:#fffaf3!important;border-radius:14px!important;overflow:hidden!important}
-.calc td{border-top:1px solid #e5d8c8!important;padding:9px 7px!important;font-size:12.5px!important}
-.calc td:first-child{color:#6e5f78!important}
-.footer-note{border:1px solid #ddcfbd!important;background:rgba(255,250,242,.8)!important;color:#756b70!important}
-@media(max-width:930px){.input-shell{grid-template-columns:1fr!important;min-height:0!important}.art{min-height:590px!important;border-right:0!important;border-bottom:1px solid rgba(76,47,104,.16)!important}.overview{grid-template-columns:repeat(2,1fr)!important}.months{grid-template-columns:repeat(2,1fr)!important}}
-@media(max-width:700px){.wrap{padding:9px 8px 30px!important}.paper,.result{border-radius:20px!important}.panel{padding:23px 14px!important}.art{min-height:470px!important}.privacy{text-align:center!important;margin-bottom:21px!important}.heading h1{font-size:28px!important}.heading h1:before,.heading h1:after,.result-title:before,.result-title:after{display:none!important}.grid,.overview,.sections,.months,.hero-reading{grid-template-columns:1fr!important}.grid{padding:14px!important}.result{padding:12px!important}.result-title{font-size:24px!important}.score{width:118px!important;height:118px!important;font-size:23px!important}}
-`;
-function applyPremium(){
-  try{
-    const doc=app.contentDocument;
-    if(!doc)return;
-    let style=doc.getElementById('premium6-style');
-    if(!style){style=doc.createElement('style');style.id='premium6-style';style.textContent=PREMIUM_CSS;doc.head.appendChild(style)}
-    const img=doc.getElementById('hojakdo');
-    if(img){
-      img.style.visibility='hidden';
-      img.onload=()=>{img.style.visibility='visible';img.style.opacity='1'};
-      img.onerror=()=>{img.style.visibility='visible';img.alt='Tojung Bi Kyul Korean folk-art illustration';};
-      img.src='./assets/hojakdo-app6.webp?v=20260827-verified1';
-    }
-  }catch(e){console.error('premium apply',e)}
-}
-app.addEventListener('load',applyPremium);
 window.addEventListener('message',e=>{
   if(!e.data||e.data.type!=='TOJEONG_HEIGHT')return;
-  const h=Math.max(900,Math.min(12000,Number(e.data.height)||1500));
-  app.style.height=h+'px';
+  app.style.height=Math.max(1000,Math.min(14000,Number(e.data.height)||1900))+'px';
 });
 </script>
 </body>

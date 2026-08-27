@@ -7,23 +7,90 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>Tojung Bi Kyul — 144 Readings Fortune Calculator</title>
-<style>html,body{margin:0;padding:0;background:#efe5d3}iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;background:#efe5d3}</style>
+<style>
+html,body{margin:0;padding:0;background:#efe5d3}
+iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;background:#efe5d3}
+</style>
 </head>
 <body>
-<iframe id="app" src="./english-app7.html?v=20260827-layout4" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260827-sharp1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
-app.addEventListener('load',()=>{
+const SHARP_CSS=`
+/* Actual production styling matched to the approved mockup */
+:root{--ink:#25174f;--violet:#452174;--violet2:#684492;--gold:#b38a50;--paper:#fffaf1;--line:#ddd2c5;--soft:#f8f2e9}
+html,body{background:#efe5d3!important}
+.app{width:min(1240px,100%)!important;padding:10px 8px 34px!important}
+.top{display:grid!important;grid-template-columns:38% 62%!important;align-items:stretch!important;min-height:835px!important;border:1px solid #d2c2ad!important;border-radius:15px!important;background:#fbf4e7!important;overflow:hidden!important;box-shadow:0 14px 38px rgba(46,30,62,.10)!important}
+.art{min-height:835px!important;height:auto!important;background:#eee1cd!important;overflow:hidden!important}
+.art img{width:100%!important;height:100%!important;display:block!important;object-fit:cover!important;object-position:center top!important;image-rendering:auto!important}
+.form-panel{min-width:0!important;padding:28px 26px 24px!important;background:linear-gradient(180deg,#fffdf9 0%,#fbf6ef 100%)!important}
+.privacy{margin:0 2px 22px!important;text-align:right!important;color:#5f5962!important;font-size:11px!important;font-weight:500!important;letter-spacing:.01em!important}
+.form-box{border:1px solid #d4c5e0!important;border-radius:14px!important;padding:22px 18px 18px!important;background:rgba(255,255,255,.64)!important;box-shadow:0 8px 24px rgba(57,35,81,.045)!important}
+.form-title{margin:0 0 27px!important;color:var(--ink)!important;text-align:center!important;font:700 33px/1.14 Georgia,'Times New Roman',serif!important;letter-spacing:-.02em!important}
+.form-title:before,.form-title:after{color:#8160a8!important;font-size:20px!important;margin:0 14px!important}
+.grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:20px 16px!important}
+.field{min-width:0!important;padding:0!important;border:0!important;background:transparent!important}
+.field:nth-child(n){border:0!important}
+label{display:flex!important;align-items:center!important;gap:7px!important;margin:0 0 7px!important;color:#392066!important;font-size:12px!important;font-weight:700!important;line-height:1.2!important;white-space:nowrap!important}
+.icon{font-size:15px!important;color:#654092!important;font-weight:500!important}
+input,select{width:100%!important;height:48px!important;border:1px solid #d8cfc4!important;border-radius:6px!important;background:#fffdf9!important;color:#38323d!important;padding:0 12px!important;font-size:13px!important;outline:none!important;box-shadow:0 1px 2px rgba(48,34,56,.025)!important;transition:border-color .15s ease,box-shadow .15s ease!important}
+input:hover,select:hover{border-color:#bcaec7!important}
+input:focus,select:focus{border-color:#73529b!important;box-shadow:0 0 0 2px rgba(103,70,143,.09)!important}
+.gender{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important}
+.gender button{height:48px!important;border:1px solid #d2c5b8!important;border-radius:6px!important;background:#fffdf9!important;color:#352247!important;font-size:13px!important;font-weight:650!important;box-shadow:none!important;cursor:pointer!important}
+.gender button.active{border-color:#4c2878!important;background:linear-gradient(180deg,#5c3688,#43216f)!important;color:#fff!important;box-shadow:0 4px 10px rgba(66,32,104,.15)!important}
+.leap-mini{margin-top:7px!important}
+.reveal{width:100%!important;height:63px!important;margin-top:24px!important;border:1px solid #8f6bae!important;border-radius:7px!important;background:linear-gradient(180deg,#583080 0%,#3f1c69 100%)!important;color:#fffaf0!important;font:700 22px/1 Georgia,'Times New Roman',serif!important;letter-spacing:.01em!important;box-shadow:0 8px 18px rgba(62,30,96,.19),inset 0 0 0 1px rgba(215,181,117,.35)!important}
+.reveal:not(:disabled):hover{filter:brightness(1.045)!important;transform:translateY(-1px)!important}
+.status{margin-top:10px!important;font-size:11px!important;color:#6b646c!important}
+.result-wrap{border-radius:15px!important;border-color:#d2c2ad!important;box-shadow:0 12px 32px rgba(46,30,62,.08)!important}
+.summary-card,.detail-hero,.area,.month-box,.calc-box{border-radius:10px!important;box-shadow:none!important}
+@media(max-width:1000px) and (min-width:641px){
+  .app{padding:6px 5px 28px!important}
+  .top{grid-template-columns:37% 63%!important;min-height:800px!important}
+  .art{min-height:800px!important}
+  .form-panel{padding:22px 16px 20px!important}
+  .form-box{padding:18px 13px 16px!important}
+  .form-title{font-size:29px!important;margin-bottom:22px!important}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 13px!important}
+  input,select,.gender button{height:46px!important}
+  .reveal{height:59px!important;font-size:20px!important;margin-top:20px!important}
+}
+@media(max-width:640px){
+  .app{padding:6px!important}
+  .top{grid-template-columns:1fr!important;min-height:0!important;border-radius:12px!important}
+  .art{min-height:0!important;aspect-ratio:455/760!important}
+  .art img{object-fit:cover!important;object-position:center top!important}
+  .form-panel{padding:18px 10px!important}
+  .privacy{text-align:center!important;margin-bottom:16px!important}
+  .form-box{padding:16px 11px!important;border-radius:11px!important}
+  .form-title{font-size:26px!important;margin-bottom:18px!important}
+  .form-title:before,.form-title:after{display:none!important}
+  .grid{grid-template-columns:1fr!important;gap:14px!important}
+  .reveal{height:58px!important;font-size:19px!important}
+}
+`;
+function applyProductionUI(){
   try{
     const doc=app.contentDocument;
-    const img=doc&&doc.getElementById('folkArt');
+    if(!doc)return;
+    let style=doc.getElementById('sharp-production-style');
+    if(!style){
+      style=doc.createElement('style');
+      style.id='sharp-production-style';
+      style.textContent=SHARP_CSS;
+      doc.head.appendChild(style);
+    }
+    const img=doc.getElementById('folkArt');
     if(img){
-      img.src='./assets/mockup-left.webp?v=20260827-layout4';
+      img.src='./assets/mockup-left.webp?v=20260827-sharp1';
       img.style.objectFit='cover';
       img.style.objectPosition='center top';
     }
-  }catch(e){console.error(e)}
-});
+  }catch(e){console.error('production ui',e)}
+}
+app.addEventListener('load',applyProductionUI);
 window.addEventListener('message',e=>{
   if(!e.data||e.data.type!=='TOJEONG_HEIGHT')return;
   app.style.height=Math.max(1000,Math.min(14000,Number(e.data.height)||1900))+'px';

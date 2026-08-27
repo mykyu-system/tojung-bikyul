@@ -13,7 +13,7 @@ iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;backgrou
 </style>
 </head>
 <body>
-<iframe id="app" src="./english-app7.html?v=20260827-sharp3" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260827-sharp4" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
 const SHARP_CSS=`
@@ -50,8 +50,8 @@ input:focus,select:focus{border-color:#73529b!important;box-shadow:0 0 0 2px rgb
 `;
 async function buildApprovedArt(){
   const parts=[];
-  for(let i=0;i<6;i++){
-    const r=await fetch(`./assets/approved-art.b64.${i}?v=20260827-approved2`,{cache:'no-store'});
+  for(let i=0;i<7;i++){
+    const r=await fetch(`./assets/approved-art.b64.${i}?v=20260827-approved3`,{cache:'no-store'});
     if(!r.ok)throw new Error('approved art part '+i+' failed');
     parts.push((await r.text()).replace(/\s+/g,''));
   }
@@ -69,12 +69,12 @@ async function applyProductionUI(){
       try{
         const src=await buildApprovedArt();
         img.onload=()=>{img.style.visibility='visible'};
-        img.onerror=()=>{img.style.visibility='visible';img.src='./assets/hojakdo-final.webp?v=20260827-safe'};
+        img.onerror=()=>{img.style.visibility='visible';img.src='./assets/hojakdo-final.webp?v=20260827-safe2'};
         img.src=src;
       }catch(err){
         console.error('approved artwork',err);
         img.style.visibility='visible';
-        img.src='./assets/hojakdo-final.webp?v=20260827-safe';
+        img.src='./assets/hojakdo-final.webp?v=20260827-safe2';
       }
       img.style.objectFit='cover';
       img.style.objectPosition='left top';

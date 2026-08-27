@@ -13,7 +13,7 @@ iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;backgrou
 </style>
 </head>
 <body>
-<iframe id="app" src="./english-app7.html?v=20260828-stable1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260828-stable2" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
 const SHARP_CSS=`
@@ -23,7 +23,7 @@ html,body{background:#efe5d3!important}
 .top{display:grid!important;grid-template-columns:clamp(280px,30vw,330px) minmax(0,1fr)!important;align-items:stretch!important;min-height:0!important;height:auto!important;border:1px solid #d2c2ad!important;border-radius:13px!important;background:#fbf4e7!important;overflow:hidden!important;box-shadow:0 12px 32px rgba(46,30,62,.09)!important}
 .art{min-height:0!important;height:auto!important;display:flex!important;align-items:stretch!important;justify-content:center!important;background:#fbf4e7!important;overflow:hidden!important;align-self:stretch!important}
 .art-fallback{display:none!important}
-.art img{width:100%!important;height:100%!important;min-height:100%!important;max-height:none!important;display:block!important;object-fit:cover!important;object-position:center top!important;image-rendering:auto!important;background:#eee1cd!important;align-self:stretch!important;visibility:visible!important}
+.art img{width:100%!important;height:calc(100% + 9px)!important;min-height:calc(100% + 9px)!important;max-height:none!important;display:block!important;object-fit:cover!important;object-position:center top!important;image-rendering:auto!important;background:#eee1cd!important;align-self:stretch!important;margin-bottom:-9px!important;visibility:visible!important}
 .form-panel{min-width:0!important;padding:16px 18px 15px!important;background:linear-gradient(180deg,#fffdf9 0%,#fbf6ef 100%)!important}
 .privacy{margin:0 1px 11px!important;text-align:right!important;color:#5f5962!important;font-size:10px!important;font-weight:500!important;line-height:1.25!important;letter-spacing:.005em!important}
 .form-box{border:1px solid #d4c5e0!important;border-radius:8px!important;padding:15px 14px 13px!important;background:rgba(255,255,255,.76)!important;box-shadow:0 5px 16px rgba(57,35,81,.04)!important}
@@ -61,7 +61,7 @@ function applyProductionUI(){
     const img=doc.getElementById('folkArt');
     if(img){
       img.style.visibility='visible';
-      const target='./assets/hojakdo-app6.webp?v=20260828-stable1';
+      const target='./assets/hojakdo-app6.webp?v=20260828-stable2';
       const preload=new Image();
       preload.onload=()=>{img.src=target;img.style.visibility='visible'};
       preload.onerror=()=>{img.style.visibility='visible'};

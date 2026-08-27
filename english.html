@@ -13,7 +13,7 @@ iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;backgrou
 </style>
 </head>
 <body>
-<iframe id="app" src="./english-app7.html?v=20260828-stable2" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260828-zodiacseal1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
 const SHARP_CSS=`
@@ -46,22 +46,52 @@ input:focus,select:focus{border-color:#73529b!important;box-shadow:0 0 0 2px rgb
 .status{min-height:14px!important;margin-top:6px!important;font-size:10px!important;line-height:1.25!important;color:#6b646c!important}
 .result-wrap{border-radius:13px!important;border-color:#d2c2ad!important;box-shadow:0 10px 26px rgba(46,30,62,.07)!important}
 .summary-card,.detail-hero,.area,.month-box,.calc-box{border-radius:8px!important;box-shadow:none!important}
-@media(max-width:1000px) and (min-width:761px){.app{padding:5px 4px 26px!important}.top{grid-template-columns:262px minmax(0,1fr)!important;min-height:0!important;height:auto!important}.form-panel{padding:13px 12px 12px!important}.privacy{font-size:9px!important;margin-bottom:8px!important}.form-box{padding:12px 10px 10px!important}.form-title{font-size:24px!important;margin-bottom:12px!important}.form-title:before,.form-title:after{font-size:14px!important;margin:0 6px!important}.grid{gap:9px 9px!important}label{font-size:9.5px!important;margin-bottom:4px!important}input,select,.gender button{height:37px!important;font-size:11px!important}.reveal{height:46px!important;font-size:17px!important;margin-top:11px!important}.status{margin-top:4px!important;font-size:9px!important}}
+.zodiac-circle{width:148px!important;height:148px!important;border:1px solid #c8a96e!important;box-shadow:inset 0 0 0 4px rgba(255,250,238,.88),inset 0 0 0 5px rgba(179,138,80,.24),0 7px 18px rgba(54,35,44,.10)!important;background:radial-gradient(circle at 68% 21%,#c96b45 0 8px,#e3a17f 9px,transparent 10px),radial-gradient(ellipse at 48% 78%,rgba(80,104,86,.18) 0 30%,transparent 31%),linear-gradient(180deg,#fbf1dc 0%,#f0dfc1 100%)!important}
+.zodiac-circle:before{left:13px!important;right:13px!important;bottom:24px!important;height:47px!important;background:linear-gradient(145deg,#748876,#b1b79f 52%,#5d7164)!important;opacity:.40!important;filter:blur(.1px)!important}
+.zodiac-circle:after{content:""!important;position:absolute!important;right:14px!important;bottom:13px!important;width:15px!important;height:15px!important;border-radius:2px!important;background:#a84638!important;box-shadow:inset 0 0 0 2px rgba(255,236,214,.42)!important;transform:rotate(-3deg)!important;opacity:.92!important}
+.zodiac-emoji{position:relative!important;z-index:3!important;width:112px!important;height:112px!important;display:grid!important;place-items:center!important;font-size:0!important;color:var(--ink)!important;filter:none!important;border-radius:50%!important}
+.zodiac-emoji:before{content:""!important;position:absolute!important;inset:8px!important;border:1px solid rgba(74,43,92,.22)!important;border-left-color:transparent!important;border-bottom-color:rgba(179,138,80,.48)!important;border-radius:50%!important;transform:rotate(-16deg)!important}
+.zodiac-glyph{position:relative!important;z-index:2!important;display:block!important;margin-top:-7px!important;color:#2d1d52!important;font-family:'Batang','Noto Serif CJK KR','Yu Mincho','Songti SC',serif!important;font-size:62px!important;font-weight:700!important;line-height:1!important;letter-spacing:-.08em!important;text-shadow:0 1px 0 #fff7e6,0 3px 7px rgba(52,31,74,.13)!important}
+.zodiac-mini{position:absolute!important;z-index:4!important;left:0!important;right:0!important;bottom:4px!important;color:#775b37!important;font:700 8px/1.1 Georgia,'Times New Roman',serif!important;letter-spacing:.16em!important;text-transform:uppercase!important;text-align:center!important}
+@media(max-width:1000px) and (min-width:761px){.app{padding:5px 4px 26px!important}.top{grid-template-columns:262px minmax(0,1fr)!important;min-height:0!important;height:auto!important}.form-panel{padding:13px 12px 12px!important}.privacy{font-size:9px!important;margin-bottom:8px!important}.form-box{padding:12px 10px 10px!important}.form-title{font-size:24px!important;margin-bottom:12px!important}.form-title:before,.form-title:after{font-size:14px!important;margin:0 6px!important}.grid{gap:9px 9px!important}label{font-size:9.5px!important;margin-bottom:4px!important}input,select,.gender button{height:37px!important;font-size:11px!important}.reveal{height:46px!important;font-size:17px!important;margin-top:11px!important}.status{margin-top:4px!important;font-size:9px!important}.zodiac-circle{width:140px!important;height:140px!important}.zodiac-emoji{width:105px!important;height:105px!important}.zodiac-glyph{font-size:58px!important}}
 @media(max-width:760px) and (min-width:641px){.top{grid-template-columns:235px minmax(0,1fr)!important;min-height:0!important;height:auto!important}.form-panel{padding:10px 9px!important}.form-title{font-size:21px!important}.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}label{font-size:9px!important}input,select,.gender button{height:34px!important;font-size:10.5px!important}.reveal{height:43px!important;font-size:16px!important}}
-@media(max-width:640px){.app{padding:5px!important}.top{grid-template-columns:1fr!important;min-height:0!important;height:auto!important;border-radius:10px!important}.art{min-height:0!important;align-self:auto!important;align-items:flex-start!important}.art img{width:min(100%,360px)!important;height:auto!important;min-height:0!important;margin:0 auto!important;object-fit:contain!important}.form-panel{padding:14px 9px!important}.privacy{text-align:center!important;margin-bottom:12px!important;font-size:10px!important}.form-box{padding:14px 10px!important;border-radius:8px!important}.form-title{font-size:25px!important;margin-bottom:15px!important}.form-title:before,.form-title:after{display:none!important}.grid{grid-template-columns:1fr!important;gap:11px!important}label{font-size:11px!important}input,select,.gender button{height:43px!important;font-size:12px!important}.reveal{height:54px!important;font-size:19px!important;margin-top:15px!important}}
+@media(max-width:640px){.app{padding:5px!important}.top{grid-template-columns:1fr!important;min-height:0!important;height:auto!important;border-radius:10px!important}.art{min-height:0!important;align-self:auto!important;align-items:flex-start!important}.art img{width:min(100%,360px)!important;height:auto!important;min-height:0!important;margin:0 auto!important;object-fit:contain!important}.form-panel{padding:14px 9px!important}.privacy{text-align:center!important;margin-bottom:12px!important;font-size:10px!important}.form-box{padding:14px 10px!important;border-radius:8px!important}.form-title{font-size:25px!important;margin-bottom:15px!important}.form-title:before,.form-title:after{display:none!important}.grid{grid-template-columns:1fr!important;gap:11px!important}label{font-size:11px!important}input,select,.gender button{height:43px!important;font-size:12px!important}.reveal{height:54px!important;font-size:19px!important;margin-top:15px!important}.zodiac-circle{width:142px!important;height:142px!important}.zodiac-emoji{width:108px!important;height:108px!important}}
 `;
+const ZODIAC_SEALS={Rat:'鼠',Ox:'牛',Tiger:'虎',Rabbit:'兔',Dragon:'龍',Snake:'蛇',Horse:'馬',Goat:'羊',Monkey:'猴',Rooster:'雞',Dog:'狗',Pig:'豬'};
+function installZodiacSeals(doc){
+  if(doc.documentElement.dataset.zodiacSeals==='1')return;
+  doc.documentElement.dataset.zodiacSeals='1';
+  const sync=(nameId,targetId)=>{
+    const nameEl=doc.getElementById(nameId),target=doc.getElementById(targetId);
+    if(!nameEl||!target)return;
+    const render=()=>{
+      const name=(nameEl.textContent||'').trim();
+      const glyph=ZODIAC_SEALS[name]||'福';
+      target.textContent='';
+      const g=doc.createElement('span');g.className='zodiac-glyph';g.textContent=glyph;
+      const l=doc.createElement('span');l.className='zodiac-mini';l.textContent=name||'Zodiac';
+      target.append(g,l);
+      target.setAttribute('aria-label',(name||'Zodiac')+' traditional animal seal');
+    };
+    render();
+    new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
+  };
+  sync('yearZodiac','yearEmoji');
+  sync('dayZodiac','dayEmoji');
+}
 function applyProductionUI(){
   try{
     const doc=app.contentDocument;
     if(!doc)return;
     let style=doc.getElementById('sharp-production-style');
     if(!style){style=doc.createElement('style');style.id='sharp-production-style';style.textContent=SHARP_CSS;doc.head.appendChild(style)}
+    installZodiacSeals(doc);
     const fallback=doc.getElementById('artFallback');
     if(fallback)fallback.style.display='none';
     const img=doc.getElementById('folkArt');
     if(img){
       img.style.visibility='visible';
-      const target='./assets/hojakdo-app6.webp?v=20260828-stable2';
+      const target='./assets/hojakdo-app6.webp?v=20260828-zodiacseal1';
       const preload=new Image();
       preload.onload=()=>{img.src=target;img.style.visibility='visible'};
       preload.onerror=()=>{img.style.visibility='visible'};

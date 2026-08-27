@@ -8,16 +8,19 @@
 <meta http-equiv="Expires" content="0">
 <title>Mykyu System — Personal Fortune</title>
 <style>
-html,body{margin:0;padding:0;background:#f4f6f8}
-iframe{display:block;width:100%;height:5200px;min-height:100vh;border:0;background:#f4f6f8}
+html,body{margin:0;padding:0;background:#efe4d1}
+iframe{display:block;width:100%;height:1500px;min-height:100vh;border:0;background:#efe4d1}
 </style>
 </head>
 <body>
-<iframe
-  id="app"
-  src="./english-app4.html?v=20260827-fix2"
-  title="Mykyu System Personal Fortune"
-  loading="eager"
-  scrolling="yes"></iframe>
+<iframe id="app" src="./english-app5.html?v=20260827-app5" title="Mykyu System Personal Fortune" loading="eager" scrolling="no"></iframe>
+<script>
+const app=document.getElementById('app');
+window.addEventListener('message',e=>{
+  if(!e.data||e.data.type!=='TOJEONG_HEIGHT')return;
+  const h=Math.max(900,Math.min(12000,Number(e.data.height)||1500));
+  app.style.height=h+'px';
+});
+</script>
 </body>
 </html>

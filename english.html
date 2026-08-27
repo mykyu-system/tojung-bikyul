@@ -13,11 +13,11 @@ iframe{display:block;width:100%;height:1900px;min-height:100vh;border:0;backgrou
 </style>
 </head>
 <body>
-<iframe id="app" src="./english-app7.html?v=20260827-sharp1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<iframe id="app" src="./english-app7.html?v=20260827-sharp2" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
 <script>
 const app=document.getElementById('app');
+let approvedArtUrl='';
 const SHARP_CSS=`
-/* Actual production styling matched to the approved mockup */
 :root{--ink:#25174f;--violet:#452174;--violet2:#684492;--gold:#b38a50;--paper:#fffaf1;--line:#ddd2c5;--soft:#f8f2e9}
 html,body{background:#efe5d3!important}
 .app{width:min(1240px,100%)!important;padding:10px 8px 34px!important}
@@ -46,55 +46,39 @@ input:focus,select:focus{border-color:#73529b!important;box-shadow:0 0 0 2px rgb
 .status{margin-top:10px!important;font-size:11px!important;color:#6b646c!important}
 .result-wrap{border-radius:15px!important;border-color:#d2c2ad!important;box-shadow:0 12px 32px rgba(46,30,62,.08)!important}
 .summary-card,.detail-hero,.area,.month-box,.calc-box{border-radius:10px!important;box-shadow:none!important}
-@media(max-width:1000px) and (min-width:641px){
-  .app{padding:6px 5px 28px!important}
-  .top{grid-template-columns:37% 63%!important;min-height:800px!important}
-  .art{min-height:800px!important}
-  .form-panel{padding:22px 16px 20px!important}
-  .form-box{padding:18px 13px 16px!important}
-  .form-title{font-size:29px!important;margin-bottom:22px!important}
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 13px!important}
-  input,select,.gender button{height:46px!important}
-  .reveal{height:59px!important;font-size:20px!important;margin-top:20px!important}
-}
-@media(max-width:640px){
-  .app{padding:6px!important}
-  .top{grid-template-columns:1fr!important;min-height:0!important;border-radius:12px!important}
-  .art{min-height:0!important;aspect-ratio:455/760!important}
-  .art img{object-fit:cover!important;object-position:center top!important}
-  .form-panel{padding:18px 10px!important}
-  .privacy{text-align:center!important;margin-bottom:16px!important}
-  .form-box{padding:16px 11px!important;border-radius:11px!important}
-  .form-title{font-size:26px!important;margin-bottom:18px!important}
-  .form-title:before,.form-title:after{display:none!important}
-  .grid{grid-template-columns:1fr!important;gap:14px!important}
-  .reveal{height:58px!important;font-size:19px!important}
-}
+@media(max-width:1000px) and (min-width:641px){.app{padding:6px 5px 28px!important}.top{grid-template-columns:37% 63%!important;min-height:800px!important}.art{min-height:800px!important}.form-panel{padding:22px 16px 20px!important}.form-box{padding:18px 13px 16px!important}.form-title{font-size:29px!important;margin-bottom:22px!important}.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 13px!important}input,select,.gender button{height:46px!important}.reveal{height:59px!important;font-size:20px!important;margin-top:20px!important}}
+@media(max-width:640px){.app{padding:6px!important}.top{grid-template-columns:1fr!important;min-height:0!important;border-radius:12px!important}.art{min-height:0!important;aspect-ratio:455/760!important}.art img{object-fit:cover!important;object-position:center top!important}.form-panel{padding:18px 10px!important}.privacy{text-align:center!important;margin-bottom:16px!important}.form-box{padding:16px 11px!important;border-radius:11px!important}.form-title{font-size:26px!important;margin-bottom:18px!important}.form-title:before,.form-title:after{display:none!important}.grid{grid-template-columns:1fr!important;gap:14px!important}.reveal{height:58px!important;font-size:19px!important}}
 `;
-function applyProductionUI(){
+async function buildApprovedArt(){
+  const parts=await Promise.all([0,1,2,3,4,5].map(async i=>{
+    const r=await fetch(`./assets/approved-art.b64.${i}?v=20260827-approved1`,{cache:'no-store'});
+    if(!r.ok)throw new Error('approved art part '+i+' failed');
+    return (await r.text()).trim();
+  }));
+  const b64=parts.join('');
+  const binary=atob(b64);
+  const bytes=new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+  if(approvedArtUrl)URL.revokeObjectURL(approvedArtUrl);
+  approvedArtUrl=URL.createObjectURL(new Blob([bytes],{type:'image/webp'}));
+  return approvedArtUrl;
+}
+async function applyProductionUI(){
   try{
     const doc=app.contentDocument;
     if(!doc)return;
     let style=doc.getElementById('sharp-production-style');
-    if(!style){
-      style=doc.createElement('style');
-      style.id='sharp-production-style';
-      style.textContent=SHARP_CSS;
-      doc.head.appendChild(style);
-    }
+    if(!style){style=doc.createElement('style');style.id='sharp-production-style';style.textContent=SHARP_CSS;doc.head.appendChild(style)}
     const img=doc.getElementById('folkArt');
     if(img){
-      img.src='./assets/mockup-left.webp?v=20260827-sharp1';
+      try{img.src=await buildApprovedArt()}catch(err){console.error('approved artwork',err);img.src='./assets/mockup-left.webp?v=20260827-fallback'}
       img.style.objectFit='cover';
       img.style.objectPosition='center top';
     }
   }catch(e){console.error('production ui',e)}
 }
 app.addEventListener('load',applyProductionUI);
-window.addEventListener('message',e=>{
-  if(!e.data||e.data.type!=='TOJEONG_HEIGHT')return;
-  app.style.height=Math.max(1000,Math.min(14000,Number(e.data.height)||1900))+'px';
-});
+window.addEventListener('message',e=>{if(!e.data||e.data.type!=='TOJEONG_HEIGHT')return;app.style.height=Math.max(1000,Math.min(14000,Number(e.data.height)||1900))+'px'});
 </script>
 </body>
 </html>

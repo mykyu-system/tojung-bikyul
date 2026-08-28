@@ -19,7 +19,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacexact3" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacnew1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -77,16 +77,28 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
   function buildZodiacSprite(){
     if(zodiacSpritePromise)return zodiacSpritePromise;
     zodiacSpritePromise=(async()=>{
-      const files=['./assets/zodiac-user-exact2.b64.0','./assets/zodiac-user-exact2.b64.1','./assets/zodiac-user-exact2.b64.2'];
+      const files=[
+        './assets/zodiac-new-v1.b64.0',
+        './assets/zodiac-new-v1.b64.1',
+        './assets/zodiac-new-v1.b64.2',
+        './assets/zodiac-new-v1.b64.3'
+      ];
       const chunks=[];
       for(const file of files){
-        const r=await fetch(file+'?v=20260829-zodiacexact3',{cache:'no-store'});
-        if(!r.ok)throw new Error('exact zodiac asset failed: '+file);
+        const r=await fetch(file+'?v=20260829-zodiacnew1',{cache:'no-store'});
+        if(!r.ok)throw new Error('new zodiac asset failed: '+file);
         chunks.push((await r.text()).replace(/\s+/g,''));
       }
       const data=chunks.join('');
-      if(data.length<25000||!data.startsWith('UklG'))throw new Error('exact zodiac sprite invalid');
-      return 'data:image/webp;base64,'+data;
+      if(data.length<100000||!data.startsWith('UklG'))throw new Error('new zodiac sprite invalid');
+      const src='data:image/webp;base64,'+data;
+      await new Promise((resolve,reject)=>{
+        const test=new Image();
+        test.onload=resolve;
+        test.onerror=()=>reject(new Error('new zodiac sprite decode failed'));
+        test.src=src;
+      });
+      return src;
     })();
     return zodiacSpritePromise;
   }
@@ -185,7 +197,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         revealFinalUI();
       })
       .catch(e=>{
-        console.error('exact zodiac install failed',e);
+        console.error('new zodiac install failed',e);
         revealFinalUI();
       });
 

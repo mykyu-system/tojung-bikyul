@@ -13,7 +13,7 @@
     if(!frame)return;
     const state=states.get(frame)||{initial:false,result:false};
     if(mode==='initial'){
-      if(state.initial||state.result)return;
+      if(state.result)return;
       state.initial=true;
     }else if(mode==='result'){
       if(state.result)return;
@@ -43,6 +43,13 @@
     });
   }
 
+  function requestHeights(){
+    normalizeExisting();
+    targetFrames().forEach(frame=>{
+      try{frame.contentWindow.postMessage({type:'TOJEONG_REQUEST_HEIGHT'},ORIGIN)}catch(e){}
+    });
+  }
+
   window.addEventListener('message',function(e){
     if(e.origin!==ORIGIN||!e.data||e.data.type!=='TOJEONG_BLOGGER_HEIGHT')return;
     const frame=targetFrames().find(f=>f.contentWindow===e.source);
@@ -50,7 +57,15 @@
     setFrameHeight(frame,e.data.height,e.data.mode==='result'?'result':'initial');
   });
 
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',normalizeExisting,{once:true});
-  else normalizeExisting();
-  window.addEventListener('load',normalizeExisting,{once:true});
+  function start(){
+    normalizeExisting();
+    requestHeights();
+    setTimeout(requestHeights,350);
+    setTimeout(requestHeights,900);
+    setTimeout(requestHeights,1700);
+  }
+
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+  window.addEventListener('load',requestHeights,{once:true});
 })();

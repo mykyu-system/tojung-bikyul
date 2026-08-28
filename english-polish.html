@@ -12,7 +12,7 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="stage" src="./english-v4.html?v=20260828-hardlock1" title="Tojung Bi Kyul" scrolling="no"></iframe>
+<iframe id="stage" src="./english-v4.html?v=20260828-hardlock2" title="Tojung Bi Kyul" scrolling="no"></iframe>
 <script>
 (function(){
   const stage=document.getElementById('stage');
@@ -20,6 +20,7 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
   let initialHeight=0;
   let resultHeight=0;
   let detailObserver=null;
+  let fallbackTimer=null;
 
   function deep(){
     try{
@@ -86,6 +87,7 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     if(!h)return;
     initialHeight=freezeAll(refs,h);
     state='initial';
+    if(fallbackTimer){clearTimeout(fallbackTimer);fallbackTimer=null}
     post('TOJEONG_INITIAL_LOCK',initialHeight);
   }
 
@@ -121,6 +123,18 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     if(detail.classList.contains('show'))settleResult();
   }
 
+  function armInitialLock(link){
+    if(state!=='boot')return;
+    let armed=false;
+    const go=()=>{
+      if(armed)return;
+      armed=true;
+      setTimeout(lockInitial,90);
+    };
+    try{if(link.sheet)go();else link.addEventListener('load',go,{once:true})}catch(e){link.addEventListener('load',go,{once:true})}
+    if(!fallbackTimer)fallbackTimer=setTimeout(()=>{if(state==='boot')lockInitial()},1200);
+  }
+
   function apply(){
     const refs=deep();
     if(!refs)return false;
@@ -131,10 +145,9 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
       link.rel='stylesheet';
       link.href='./assets/final-polish-20260828.css?v=3';
       refs.doc.head.appendChild(link);
-      link.addEventListener('load',()=>setTimeout(lockInitial,80),{once:true});
     }
     watchResult(refs);
-    setTimeout(lockInitial,180);
+    armInitialLock(link);
     return true;
   }
 

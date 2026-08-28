@@ -1,0 +1,26 @@
+name: Patch Numeric Inputs
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-numeric-inputs.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore stable calculator and patch numeric inputs
+        run: |
+          git show 4c134608ba4cca902bd1beb62f83767548caaaa9:english-app7.html > /tmp/english-app7-base.html
+          python scripts/patch_numeric_inputs.py
+      - name: Commit patched calculator
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add english-app7.html
+          git diff --cached --quiet || git commit -m 'Apply direct numeric input UI [skip numeric-patch]'
+          git push

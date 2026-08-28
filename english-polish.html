@@ -8,18 +8,18 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
-#stage{display:block;width:100%;height:980px;border:0;background:#efe6d8;overflow:hidden}
+#stage{display:block;width:100%;height:760px;border:0;background:#efe6d8;overflow:hidden}
 </style>
 </head>
 <body>
-<iframe id="stage" src="./english-v4.html?v=20260828-state2" title="Tojung Bi Kyul" scrolling="no"></iframe>
+<iframe id="stage" src="./english-v4.html?v=20260828-hardlock1" title="Tojung Bi Kyul" scrolling="no"></iframe>
 <script>
 (function(){
   const stage=document.getElementById('stage');
-  let mode='initial';
+  let state='boot';
   let initialHeight=0;
-  let observer=null;
-  let initialTimer=null;
+  let resultHeight=0;
+  let detailObserver=null;
 
   function deep(){
     try{
@@ -33,105 +33,92 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     }catch(e){return null}
   }
 
-  function style(doc,id,css){
-    let el=doc.getElementById(id);
-    if(!el){el=doc.createElement('style');el.id=id;doc.head.appendChild(el)}
-    el.textContent=css;
+  function upsert(doc,id,css){
+    let s=doc.getElementById(id);
+    if(!s){s=doc.createElement('style');s.id=id;doc.head.appendChild(s)}
+    s.textContent=css;
   }
 
-  function setLayerHeights(refs,h){
-    h=Math.max(720,Math.min(20000,Math.ceil(h)));
-    style(refs.outer,'tojung-state-shell',`html,body{overflow:hidden!important}#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
-    style(refs.middle,'tojung-state-app',`html,body{overflow:hidden!important}#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
+  function freezeAll(refs,h){
+    h=Math.max(360,Math.min(24000,Math.ceil(h)));
+    upsert(refs.outer,'tojung-hard-shell',`html,body{margin:0!important;overflow:hidden!important}#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
+    upsert(refs.middle,'tojung-hard-app',`html,body{margin:0!important;overflow:hidden!important}#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
     stage.style.height=h+'px';
     document.documentElement.style.height=h+'px';
     document.body.style.height=h+'px';
     stage.setAttribute('scrolling','no');
     refs.shell.setAttribute('scrolling','no');
     refs.app.setAttribute('scrolling','no');
-    try{
-      refs.doc.documentElement.style.overflow='hidden';
-      refs.doc.body.style.overflow='hidden';
-    }catch(e){}
+    refs.doc.documentElement.style.overflow='hidden';
+    if(refs.doc.body)refs.doc.body.style.overflow='hidden';
     return h;
   }
 
-  function announce(type,h){
-    try{parent.postMessage({type,height:h,mode:mode},'*')}catch(e){}
+  function post(type,h){
+    try{parent.postMessage({type,height:h},'*')}catch(e){}
   }
 
-  function contentBottom(doc){
-    const result=doc.getElementById('result');
-    if(!result)return 0;
-    const r=result.getBoundingClientRect();
+  function topBottom(doc){
+    const top=doc.querySelector('.top');
+    if(!top)return 0;
+    const r=top.getBoundingClientRect();
     const y=doc.defaultView?doc.defaultView.scrollY:0;
-    const app=doc.querySelector('.app');
-    let pad=16;
-    try{if(app)pad=parseFloat(doc.defaultView.getComputedStyle(app).paddingBottom)||16}catch(e){}
-    return Math.ceil(r.bottom+y+pad+4);
+    return Math.ceil(r.bottom+y+2);
   }
 
-  function resultBottom(doc){
+  function fullBottom(doc){
     const result=doc.getElementById('result');
     const detail=doc.getElementById('detail');
-    const target=(detail&&detail.classList.contains('show'))?result:null;
-    if(!target)return 0;
-    const r=target.getBoundingClientRect();
+    if(!result||!detail||!detail.classList.contains('show'))return 0;
+    const r=result.getBoundingClientRect();
     const y=doc.defaultView?doc.defaultView.scrollY:0;
     const app=doc.querySelector('.app');
     let pad=20;
     try{if(app)pad=parseFloat(doc.defaultView.getComputedStyle(app).paddingBottom)||20}catch(e){}
-    return Math.ceil(r.bottom+y+pad+8);
+    return Math.ceil(r.bottom+y+pad+6);
   }
 
-  function lockInitial(refs){
-    if(mode!=='initial'||initialHeight)return;
-    const h=contentBottom(refs.doc);
+  function lockInitial(){
+    if(state!=='boot')return;
+    const refs=deep();
+    if(!refs)return;
+    const h=topBottom(refs.doc);
     if(!h)return;
-    initialHeight=setLayerHeights(refs,h);
-    announce('TOJEONG_INITIAL_LOCK',initialHeight);
+    initialHeight=freezeAll(refs,h);
+    state='initial';
+    post('TOJEONG_INITIAL_LOCK',initialHeight);
   }
 
-  function scheduleInitial(refs){
-    if(initialTimer)clearTimeout(initialTimer);
-    initialTimer=setTimeout(()=>{
-      const r=deep();
-      if(!r||mode!=='initial'||initialHeight)return;
-      lockInitial(r);
-    },420);
+  function settleResult(){
+    if(state!=='initial')return;
+    state='settling';
+    let samples=0;
+    let maxH=0;
+    const timer=setInterval(()=>{
+      const refs=deep();
+      if(!refs){samples++;if(samples>=8){clearInterval(timer);state='initial'}return}
+      const h=fullBottom(refs.doc);
+      if(h>maxH)maxH=h;
+      samples++;
+      if(samples>=6){
+        clearInterval(timer);
+        if(!maxH){state='initial';return}
+        resultHeight=freezeAll(refs,maxH);
+        state='result';
+        post('TOJEONG_RESULT_EXPAND',resultHeight);
+      }
+    },110);
   }
 
-  function expandResult(refs){
-    if(mode==='result')return;
-    mode='result';
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      const current=deep();
-      if(!current)return;
-      const h=resultBottom(current.doc);
-      if(!h)return;
-      const finalH=setLayerHeights(current,h);
-      announce('TOJEONG_RESULT_EXPAND',finalH);
-      setTimeout(()=>{
-        const again=deep();
-        if(!again)return;
-        const h2=resultBottom(again.doc);
-        if(h2>finalH+4){
-          const final2=setLayerHeights(again,h2);
-          announce('TOJEONG_RESULT_EXPAND',final2);
-        }
-      },180);
-    }));
-  }
-
-  function watch(refs){
-    if(observer)observer.disconnect();
+  function watchResult(refs){
+    if(detailObserver)detailObserver.disconnect();
     const detail=refs.doc.getElementById('detail');
     if(!detail)return;
-    observer=new MutationObserver(()=>{
-      const r=deep();
-      if(r&&detail.classList.contains('show'))expandResult(r);
+    detailObserver=new MutationObserver(()=>{
+      if(detail.classList.contains('show'))settleResult();
     });
-    observer.observe(detail,{attributes:true,attributeFilter:['class']});
+    detailObserver.observe(detail,{attributes:true,attributeFilter:['class']});
+    if(detail.classList.contains('show'))settleResult();
   }
 
   function apply(){
@@ -144,10 +131,10 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
       link.rel='stylesheet';
       link.href='./assets/final-polish-20260828.css?v=3';
       refs.doc.head.appendChild(link);
-      link.addEventListener('load',()=>scheduleInitial(deep()),{once:true});
+      link.addEventListener('load',()=>setTimeout(lockInitial,80),{once:true});
     }
-    watch(refs);
-    scheduleInitial(refs);
+    watchResult(refs);
+    setTimeout(lockInitial,180);
     return true;
   }
 
@@ -155,8 +142,8 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     let n=0;
     const t=setInterval(()=>{
       n++;
-      if(apply()||n>60)clearInterval(t);
-    },100);
+      if(apply()||n>70)clearInterval(t);
+    },90);
   }
 
   stage.addEventListener('load',retry);

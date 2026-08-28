@@ -16,28 +16,20 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-hardlock1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-hardlock2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   const frame=document.getElementById('fortuneViewport');
   let initialDone=false;
   let resultDone=false;
-
   function apply(h,mode){
     h=Math.max(360,Math.min(24000,Math.ceil(Number(h)||760)));
-    if(mode==='initial'){
-      if(initialDone||resultDone)return;
-      initialDone=true;
-    }else{
-      if(resultDone)return;
-      resultDone=true;
-    }
+    if(mode==='initial'){if(initialDone||resultDone)return;initialDone=true}else{if(resultDone)return;resultDone=true}
     frame.style.height=h+'px';
     document.documentElement.style.height=h+'px';
     document.body.style.height=h+'px';
     try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:h,mode},'*')}catch(e){}
   }
-
   window.addEventListener('message',e=>{
     if(!e.data)return;
     if(e.data.type==='TOJEONG_INITIAL_LOCK')apply(e.data.height,'initial');

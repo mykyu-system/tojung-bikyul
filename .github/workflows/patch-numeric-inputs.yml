@@ -17,10 +17,11 @@ jobs:
         run: |
           git show 4c134608ba4cca902bd1beb62f83767548caaaa9:english-app7.html > /tmp/english-app7-base.html
           python scripts/patch_numeric_inputs.py
-      - name: Commit patched calculator
+          python scripts/route_numeric_ui.py
+      - name: Commit patched calculator and routes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add english-app7.html
-          git diff --cached --quiet || git commit -m 'Apply direct numeric input UI [skip numeric-patch]'
+          git add english-app7.html english-v2.html english-v4.html english.html
+          git diff --cached --quiet || git commit -m 'Apply direct numeric input UI and production route [skip numeric-patch]'
           git push

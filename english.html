@@ -19,7 +19,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-userzodiac1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacfix2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -74,24 +74,28 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     });
   }
 
-  function buildUserZodiacSprite(){
+  function buildZodiacSprite(){
     if(zodiacSpritePromise)return zodiacSpritePromise;
     zodiacSpritePromise=(async()=>{
-      const r=await fetch('./assets/zodiac-user-v1.b64?v=20260829-userzodiac1',{cache:'no-store'});
-      if(!r.ok)throw new Error('user zodiac asset failed');
-      const data=(await r.text()).replace(/\s+/g,'');
-      if(data.length<100000)throw new Error('user zodiac asset incomplete');
+      const chunks=[];
+      for(let i=0;i<4;i++){
+        const r=await fetch(`./assets/zodiac12.b64.${i}?v=20260829-zodiacfix2`,{cache:'no-store'});
+        if(!r.ok)throw new Error('zodiac sprite part '+i+' failed');
+        chunks.push((await r.text()).replace(/\s+/g,''));
+      }
+      const data=chunks.join('');
+      if(data.length<30000||!data.startsWith('UklG'))throw new Error('zodiac sprite invalid');
       return 'data:image/webp;base64,'+data;
     })();
     return zodiacSpritePromise;
   }
 
-  function installUserZodiac(doc,sprite){
+  function installZodiac(doc,sprite){
     if(!doc||!sprite)return;
-    let style=doc.getElementById('tojung-user-zodiac-style');
+    let style=doc.getElementById('tojung-zodiac-transparent-style');
     if(!style){
       style=doc.createElement('style');
-      style.id='tojung-user-zodiac-style';
+      style.id='tojung-zodiac-transparent-style';
       style.textContent=`
         .zodiac-circle{
           width:145px!important;
@@ -100,7 +104,8 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
           border:0!important;
           border-radius:0!important;
           overflow:visible!important;
-          background:transparent!important;
+          background:none!important;
+          background-color:transparent!important;
           box-shadow:none!important;
           display:grid!important;
           place-items:center!important;
@@ -122,6 +127,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
           border-radius:0!important;
           overflow:hidden!important;
           font-size:0!important;
+          color:transparent!important;
           background-repeat:no-repeat!important;
           background-color:transparent!important;
           box-shadow:none!important;
@@ -148,7 +154,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         target.style.backgroundPosition=`${pos[0]*100/3}% ${pos[1]*50}%`;
         target.style.backgroundRepeat='no-repeat';
         target.style.backgroundColor='transparent';
-        target.setAttribute('aria-label',name+' zodiac illustration');
+        target.setAttribute('aria-label',name+' minhwa zodiac illustration');
       };
       render();
       new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
@@ -166,7 +172,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     Promise.resolve()
       .then(()=>loadStyle(doc,'tojung-flat-final-style','./assets/final-polish-20260828.css?v=10'))
       .then(()=>loadStyle(doc,'tojung-blogger-compact-style','./assets/blogger-compact-20260828.css?v=4'))
-      .then(()=>buildUserZodiacSprite().catch(e=>{console.error('user zodiac',e);return null}))
+      .then(()=>buildZodiacSprite())
       .then(sprite=>{
         const img=doc.getElementById('folkArt');
         if(img){
@@ -174,11 +180,15 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
           img.style.objectFit=window.matchMedia('(max-width:640px)').matches?'contain':'cover';
           img.style.objectPosition=window.matchMedia('(max-width:640px)').matches?'center top':'left center';
         }
-        if(sprite)installUserZodiac(doc,sprite);
+        installZodiac(doc,sprite);
+        revealFinalUI();
+      })
+      .catch(e=>{
+        console.error('zodiac install failed',e);
         revealFinalUI();
       });
 
-    setTimeout(revealFinalUI,3000);
+    setTimeout(revealFinalUI,3500);
     return true;
   }
 

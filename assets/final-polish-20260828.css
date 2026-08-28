@@ -1,33 +1,62 @@
 @media (min-width:1001px){
 .app{width:min(1220px,100%)!important;padding:12px 12px 44px!important}
-.top{grid-template-columns:minmax(410px,44%) minmax(0,1fr)!important;min-height:620px!important;border-radius:14px!important;border-color:rgba(137,103,68,.52)!important;box-shadow:0 20px 46px rgba(49,34,51,.11)!important}
-.top:after{inset:6px!important;border-radius:10px!important}
-.art{min-height:620px!important;align-items:stretch!important;justify-content:flex-start!important;background:linear-gradient(180deg,#e8dcc9,#ded0bc)!important}
-.art img{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;object-fit:contain!important;object-position:left center!important;background:#e5d7c2!important;filter:saturate(.96) contrast(1.015)!important}
-.form-panel{display:flex!important;flex-direction:column!important;justify-content:center!important;padding:25px 28px 24px!important;background:radial-gradient(circle at 96% 0%,rgba(82,49,96,.055),transparent 24%),linear-gradient(180deg,#fffdfa 0%,#faf4eb 100%)!important}
-.form-panel:before{margin:0 0 10px 1px!important;font-size:9px!important;letter-spacing:.19em!important;color:#715773!important}
-.privacy{right:28px!important;top:24px!important;border-radius:4px!important;padding:5px 7px!important;background:transparent!important;border-color:#ddd1c3!important;font-size:9px!important;letter-spacing:.02em!important}
-.form-box{border-radius:9px!important;padding:19px 18px 17px!important;border-color:rgba(92,57,106,.25)!important;background:rgba(255,255,255,.67)!important;box-shadow:0 8px 20px rgba(55,37,61,.035)!important}
-.form-title{font-size:31px!important;margin:2px 0 17px!important;letter-spacing:-.03em!important}
-.grid{gap:11px 12px!important}
-label{font-size:10.5px!important;letter-spacing:.01em!important}
-input,select{height:43px!important;border-radius:4px!important;border-color:#d3c8bc!important;background:#fffefb!important;font-size:12px!important}
-.gender button{height:43px!important;border-radius:4px!important;font-size:12px!important}
-.reveal{height:54px!important;margin-top:15px!important;border-radius:5px!important;font-size:19px!important;box-shadow:0 7px 16px rgba(62,37,73,.16),inset 0 0 0 1px rgba(214,180,116,.22)!important}
-.status{margin-top:7px!important}
+.top{grid-template-columns:minmax(430px,46%) minmax(0,1fr)!important;min-height:690px!important;border-radius:14px!important;border:1px solid rgba(137,103,68,.52)!important;box-shadow:0 20px 46px rgba(49,34,51,.11)!important;background:#f7eee1!important}
+.top:after{inset:6px!important;border-radius:10px!important;border-color:rgba(255,255,255,.48)!important}
+.art{min-height:690px!important;align-items:stretch!important;justify-content:flex-start!important;background:#e9dcc7!important;border-right:1px solid rgba(149,119,84,.34)!important}
+.art:before{display:none!important}
+.art img{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;object-fit:contain!important;object-position:left center!important;background:#e9dcc7!important;filter:saturate(.97) contrast(1.015)!important}
+.form-panel{display:flex!important;flex-direction:column!important;justify-content:center!important;padding:24px 26px 23px!important;background:radial-gradient(circle at 96% 0%,rgba(82,49,96,.045),transparent 24%),linear-gradient(180deg,#fffdfa 0%,#faf4eb 100%)!important}
+.form-panel:before{display:none!important}
+.privacy{position:static!important;display:block!important;width:100%!important;margin:0 0 10px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;text-align:center!important;color:#746a70!important;font-size:9.5px!important;font-weight:600!important;letter-spacing:.012em!important}
+.form-box{position:relative!important;border-radius:9px!important;padding:18px 18px 17px!important;border:1px solid rgba(92,57,106,.24)!important;background:rgba(255,255,255,.72)!important;box-shadow:0 8px 20px rgba(55,37,61,.035)!important}
+.form-box:before{left:19%!important;right:19%!important;background:linear-gradient(90deg,transparent,#b88d4b 31%,#684479 50%,#b88d4b 69%,transparent)!important}
+.form-title{display:flex!important;align-items:center!important;justify-content:center!important;gap:12px!important;margin:3px 0 17px!important;text-align:center!important;color:#251936!important;font-size:30px!important;letter-spacing:-.027em!important}
+.form-title:before,.form-title:after{display:inline-block!important;content:"☁"!important;color:#b18a54!important;font-size:17px!important;line-height:1!important;margin:0!important;font-weight:400!important;opacity:.86!important}
+.grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px 12px!important}
+.field:last-child{grid-column:1/-1!important}
+label{font-size:10.5px!important;letter-spacing:.006em!important;margin-bottom:5px!important;color:#463052!important}
+.icon{color:#684879!important}
+input,select{height:42px!important;border-radius:6px!important;border:1px solid #d5c9bd!important;background:#fffefa!important;font-size:12px!important;padding-left:10px!important;padding-right:10px!important}
+input:hover,select:hover{border-color:#b9a9b8!important}
+input:focus,select:focus{border-color:#715080!important;box-shadow:0 0 0 3px rgba(100,68,112,.075)!important}
+.gender button{height:42px!important;border-radius:6px!important;font-size:12px!important}
+.gender button.active{background:linear-gradient(180deg,#5b3770,#422650)!important;box-shadow:0 5px 13px rgba(69,39,86,.14)!important}
+.reveal{height:56px!important;margin-top:15px!important;border-radius:6px!important;font-size:19px!important;letter-spacing:.01em!important;background:linear-gradient(135deg,#533064 0%,#321a49 78%,#493052 100%)!important;border-color:#8d6f8f!important;box-shadow:0 8px 18px rgba(62,37,73,.18),inset 0 0 0 1px rgba(214,180,116,.24)!important}
+.status{margin-top:7px!important;font-size:9.5px!important}
+.result-wrap{border-radius:14px!important}
+.summary-card{border-radius:10px!important}
 }
 @media (max-width:1000px) and (min-width:641px){
-.top{grid-template-columns:minmax(300px,40%) minmax(0,1fr)!important;border-radius:12px!important}
-.art{min-height:560px!important;background:#e5d7c2!important}
-.art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:left center!important;background:#e5d7c2!important}
-.form-panel{padding:18px 16px!important}.form-box{border-radius:8px!important}
-input,select,.gender button{border-radius:4px!important}.reveal{border-radius:5px!important}.privacy{border-radius:4px!important}
+.app{padding:8px 7px 34px!important}
+.top{grid-template-columns:minmax(300px,41%) minmax(0,1fr)!important;border-radius:12px!important}
+.art{min-height:610px!important;background:#e9dcc7!important}
+.art:before{display:none!important}
+.art img{width:100%!important;height:100%!important;object-fit:contain!important;object-position:left center!important;background:#e9dcc7!important}
+.form-panel{padding:17px 14px 16px!important}
+.form-panel:before{display:none!important}
+.privacy{position:static!important;width:100%!important;margin:0 0 8px!important;padding:0!important;border:0!important;background:transparent!important;text-align:center!important;font-size:9px!important}
+.form-box{border-radius:8px!important;padding:14px 12px 13px!important}
+.form-title{display:flex!important;justify-content:center!important;align-items:center!important;gap:8px!important;text-align:center!important;font-size:24px!important;margin-bottom:13px!important}
+.form-title:before,.form-title:after{display:inline-block!important;content:"☁"!important;color:#b18a54!important;font-size:14px!important;margin:0!important}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px 9px!important}
+.field:last-child{grid-column:1/-1!important}
+input,select,.gender button{height:38px!important;border-radius:5px!important;font-size:11px!important}
+.reveal{height:48px!important;border-radius:5px!important;font-size:17px!important;margin-top:11px!important}
 }
 @media (max-width:640px){
+.app{padding:6px!important}
 .top{grid-template-columns:1fr!important;border-radius:10px!important}
-.art{min-height:0!important;height:auto!important;background:#e5d7c2!important}
-.art img{width:100%!important;height:auto!important;min-height:0!important;object-fit:contain!important;object-position:center top!important;background:#e5d7c2!important}
-.form-panel{padding:15px 10px 16px!important}.form-box{border-radius:8px!important}
-input,select,.gender button{border-radius:4px!important}.reveal{border-radius:5px!important}
-.privacy{position:static!important;display:block!important;width:max-content!important;max-width:100%!important;margin:0 auto 10px!important;border-radius:4px!important;background:rgba(255,255,255,.52)!important}
+.art{min-height:0!important;height:auto!important;background:#e9dcc7!important}
+.art:before{display:none!important}
+.art img{width:100%!important;height:auto!important;min-height:0!important;object-fit:contain!important;object-position:center top!important;background:#e9dcc7!important}
+.form-panel{padding:15px 10px 16px!important}
+.form-panel:before{display:none!important}
+.privacy{position:static!important;display:block!important;width:100%!important;max-width:100%!important;margin:0 0 10px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;text-align:center!important;font-size:9px!important}
+.form-box{border-radius:8px!important;padding:14px 11px!important}
+.form-title{display:flex!important;justify-content:center!important;align-items:center!important;gap:7px!important;text-align:center!important;font-size:24px!important;margin-bottom:14px!important}
+.form-title:before,.form-title:after{display:inline-block!important;content:"☁"!important;color:#b18a54!important;font-size:13px!important;margin:0!important}
+.grid{grid-template-columns:1fr!important;gap:10px!important}
+.field:last-child{grid-column:auto!important}
+input,select,.gender button{height:43px!important;border-radius:5px!important}
+.reveal{border-radius:6px!important;height:54px!important}
 }

@@ -12,28 +12,34 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
-#fortuneViewport{display:block;width:100%;height:760px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden}
+#fortuneViewport{display:block;width:100%;height:620px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden}
+@media(max-width:640px){#fortuneViewport{height:1180px}}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-hardlock2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-fixed620" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   const frame=document.getElementById('fortuneViewport');
-  let initialDone=false;
   let resultDone=false;
-  function apply(h,mode){
-    h=Math.max(360,Math.min(24000,Math.ceil(Number(h)||760)));
-    if(mode==='initial'){if(initialDone||resultDone)return;initialDone=true}else{if(resultDone)return;resultDone=true}
+  function initialHeight(){return window.matchMedia('(max-width:640px)').matches?1180:620}
+  function setHeight(h,mode){
+    h=Math.max(360,Math.min(24000,Math.ceil(Number(h)||initialHeight())));
+    if(mode==='result'){
+      if(resultDone)return;
+      resultDone=true;
+    }else if(resultDone){
+      return;
+    }
     frame.style.height=h+'px';
     document.documentElement.style.height=h+'px';
     document.body.style.height=h+'px';
     try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:h,mode},'*')}catch(e){}
   }
+  setHeight(initialHeight(),'initial');
   window.addEventListener('message',e=>{
     if(!e.data)return;
-    if(e.data.type==='TOJEONG_INITIAL_LOCK')apply(e.data.height,'initial');
-    if(e.data.type==='TOJEONG_RESULT_EXPAND')apply(e.data.height,'result');
+    if(e.data.type==='TOJEONG_RESULT_EXPAND')setHeight(e.data.height,'result');
   });
 })();
 </script>

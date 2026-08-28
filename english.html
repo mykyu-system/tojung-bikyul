@@ -19,7 +19,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat3" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -79,11 +79,11 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 
     Promise.resolve()
       .then(()=>loadStyle(doc,'tojung-flat-final-style','./assets/final-polish-20260828.css?v=9'))
-      .then(()=>loadStyle(doc,'tojung-blogger-compact-style','./assets/blogger-compact-20260828.css?v=1'))
+      .then(()=>loadStyle(doc,'tojung-blogger-compact-style','./assets/blogger-compact-20260828.css?v=2'))
       .then(()=>{
         const img=doc.getElementById('folkArt');
         if(img){
-          img.src='./assets/mockup-left.webp?v=20260828-flat2';
+          img.src='./assets/mockup-left.webp?v=20260828-flat3';
           img.style.objectFit='contain';
           img.style.objectPosition=window.matchMedia('(max-width:640px)').matches?'center top':'left center';
         }

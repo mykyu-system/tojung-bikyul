@@ -8,19 +8,20 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
-#stage{display:block;width:100%;height:760px;border:0;background:#efe6d8;overflow:hidden}
+#stage{display:block;width:100%;height:620px;border:0;background:#efe6d8;overflow:hidden}
+@media(max-width:640px){#stage{height:1180px}}
 </style>
 </head>
 <body>
-<iframe id="stage" src="./english-v4.html?v=20260828-natural1" title="Tojung Bi Kyul" scrolling="no"></iframe>
+<iframe id="stage" src="./english-v4.html?v=20260828-fixed620" title="Tojung Bi Kyul" scrolling="no"></iframe>
 <script>
 (function(){
   const stage=document.getElementById('stage');
-  let state='boot';
-  let initialHeight=0;
-  let resultHeight=0;
+  let state='initial';
+  let resultDone=false;
   let detailObserver=null;
-  let fallbackTimer=null;
+
+  function initialHeight(){return window.matchMedia('(max-width:640px)').matches?1180:620}
 
   function deep(){
     try{
@@ -42,8 +43,8 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
 
   function freezeAll(refs,h){
     h=Math.max(360,Math.min(24000,Math.ceil(h)));
-    upsert(refs.outer,'tojung-hard-shell',`html,body{margin:0!important;overflow:hidden!important}#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
-    upsert(refs.middle,'tojung-hard-app',`html,body{margin:0!important;overflow:hidden!important}#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
+    upsert(refs.outer,'tojung-hard-shell',`html,body{margin:0!important;height:${h}px!important;overflow:hidden!important}#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
+    upsert(refs.middle,'tojung-hard-app',`html,body{margin:0!important;height:${h}px!important;overflow:hidden!important}#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
     stage.style.height=h+'px';
     document.documentElement.style.height=h+'px';
     document.body.style.height=h+'px';
@@ -59,14 +60,6 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     try{parent.postMessage({type,height:h},'*')}catch(e){}
   }
 
-  function topBottom(doc){
-    const top=doc.querySelector('.top');
-    if(!top)return 0;
-    const r=top.getBoundingClientRect();
-    const y=doc.defaultView?doc.defaultView.scrollY:0;
-    return Math.ceil(r.bottom+y+1);
-  }
-
   function fullBottom(doc){
     const result=doc.getElementById('result');
     const detail=doc.getElementById('detail');
@@ -79,37 +72,27 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     return Math.ceil(r.bottom+y+pad+2);
   }
 
-  function lockInitial(){
-    if(state!=='boot')return;
-    const refs=deep();
-    if(!refs)return;
-    const h=topBottom(refs.doc);
-    if(!h)return;
-    initialHeight=freezeAll(refs,h);
-    state='initial';
-    if(fallbackTimer){clearTimeout(fallbackTimer);fallbackTimer=null}
-    post('TOJEONG_INITIAL_LOCK',initialHeight);
-  }
-
   function settleResult(){
-    if(state!=='initial')return;
+    if(state!=='initial'||resultDone)return;
     state='settling';
-    let samples=0;
-    let maxH=0;
+    let samples=0,maxH=0;
     const timer=setInterval(()=>{
       const refs=deep();
-      if(!refs){samples++;if(samples>=8){clearInterval(timer);state='initial'}return}
-      const h=fullBottom(refs.doc);
-      if(h>maxH)maxH=h;
-      samples++;
-      if(samples>=6){
-        clearInterval(timer);
-        if(!maxH){state='initial';return}
-        resultHeight=freezeAll(refs,maxH);
-        state='result';
-        post('TOJEONG_RESULT_EXPAND',resultHeight);
+      if(refs){
+        const h=fullBottom(refs.doc);
+        if(h>maxH)maxH=h;
       }
-    },110);
+      samples++;
+      if(samples>=10){
+        clearInterval(timer);
+        const refs2=deep();
+        if(!refs2||!maxH){state='initial';return}
+        const finalH=freezeAll(refs2,maxH);
+        resultDone=true;
+        state='result';
+        post('TOJEONG_RESULT_EXPAND',finalH);
+      }
+    },120);
   }
 
   function watchResult(refs){
@@ -123,18 +106,6 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
     if(detail.classList.contains('show'))settleResult();
   }
 
-  function armInitialLock(link){
-    if(state!=='boot')return;
-    let armed=false;
-    const go=()=>{
-      if(armed)return;
-      armed=true;
-      setTimeout(lockInitial,100);
-    };
-    try{if(link.sheet)go();else link.addEventListener('load',go,{once:true})}catch(e){link.addEventListener('load',go,{once:true})}
-    if(!fallbackTimer)fallbackTimer=setTimeout(()=>{if(state==='boot')lockInitial()},1400);
-  }
-
   function apply(){
     const refs=deep();
     if(!refs)return false;
@@ -143,11 +114,12 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
       link=refs.doc.createElement('link');
       link.id='tojung-final-polish-link';
       link.rel='stylesheet';
-      link.href='./assets/final-polish-20260828.css?v=4';
+      link.href='./assets/final-polish-20260828.css?v=5';
       refs.doc.head.appendChild(link);
     }
+    freezeAll(refs,initialHeight());
     watchResult(refs);
-    armInitialLock(link);
+    post('TOJEONG_INITIAL_LOCK',initialHeight());
     return true;
   }
 

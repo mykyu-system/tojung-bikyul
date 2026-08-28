@@ -11,37 +11,39 @@
 <title>Tojung Bi Kyul — 144 Korean Fortune Readings</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;min-height:100%;overflow:hidden;background:#efe6d8}
-#fortuneViewport{display:block;width:100%;height:780px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden}
+html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
+#fortuneViewport{display:block;width:100%;height:980px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-freeze1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-state2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   const frame=document.getElementById('fortuneViewport');
-  let lockedHeight=0;
+  let mode='initial';
+  let initialLocked=false;
 
-  function clampHeight(v){return Math.max(700,Math.min(6000,Math.ceil(Number(v)||780)))}
-
-  function applyHeight(v){
-    const h=clampHeight(v);
-    lockedHeight=h;
+  function setHeight(v,nextMode){
+    const max=nextMode==='result'?20000:6000;
+    const h=Math.max(720,Math.min(max,Math.ceil(Number(v)||980)));
+    if(nextMode==='initial'&&initialLocked)return;
+    mode=nextMode;
+    if(nextMode==='initial')initialLocked=true;
     frame.style.height=h+'px';
     document.documentElement.style.height=h+'px';
     document.body.style.height=h+'px';
-    try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:h,fixed:true},'*')}catch(e){}
+    try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:h,mode:nextMode},'*')}catch(e){}
   }
 
   window.addEventListener('message',function(e){
-    if(!e.data||e.data.type!=='TOJEONG_INITIAL_HEIGHT')return;
-    applyHeight(e.data.height);
+    if(!e.data)return;
+    if(e.data.type==='TOJEONG_INITIAL_LOCK')setHeight(e.data.height,'initial');
+    if(e.data.type==='TOJEONG_RESULT_EXPAND')setHeight(e.data.height,'result');
   });
 
-  function fallback(){if(!lockedHeight)applyHeight(window.matchMedia('(max-width:640px)').matches?1200:1240)}
-
-  window.addEventListener('load',()=>setTimeout(fallback,1600));
-  setTimeout(fallback,2200);
+  setTimeout(()=>{
+    if(!initialLocked)setHeight(window.matchMedia('(max-width:640px)').matches?1180:980,'initial');
+  },1800);
 })();
 </script>
 </body>

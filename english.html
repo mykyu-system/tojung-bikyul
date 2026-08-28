@@ -19,7 +19,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat5" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-userzodiac1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -74,43 +74,62 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     });
   }
 
-  function buildZodiacSpriteV3(){
+  function buildUserZodiacSprite(){
     if(zodiacSpritePromise)return zodiacSpritePromise;
     zodiacSpritePromise=(async()=>{
-      const chunks=[];
-      for(let i=0;i<5;i++){
-        const r=await fetch(`./assets/zodiac-round-v3.b64.${i}?v=20260828-zodiac-v3`,{cache:'no-store'});
-        if(!r.ok)throw new Error('zodiac v3 asset '+i+' failed');
-        chunks.push((await r.text()).replace(/\s+/g,''));
-      }
-      const data=chunks.join('');
-      if(data.length<40000)throw new Error('zodiac v3 asset incomplete');
+      const r=await fetch('./assets/zodiac-user-v1.b64?v=20260829-userzodiac1',{cache:'no-store'});
+      if(!r.ok)throw new Error('user zodiac asset failed');
+      const data=(await r.text()).replace(/\s+/g,'');
+      if(data.length<100000)throw new Error('user zodiac asset incomplete');
       return 'data:image/webp;base64,'+data;
     })();
     return zodiacSpritePromise;
   }
 
-  function installZodiacV3(doc,sprite){
+  function installUserZodiac(doc,sprite){
     if(!doc||!sprite)return;
-    let style=doc.getElementById('tojung-zodiac-v3-style');
+    let style=doc.getElementById('tojung-user-zodiac-style');
     if(!style){
       style=doc.createElement('style');
-      style.id='tojung-zodiac-v3-style';
+      style.id='tojung-user-zodiac-style';
       style.textContent=`
+        .zodiac-circle{
+          width:145px!important;
+          height:145px!important;
+          margin:4px auto 0!important;
+          border:0!important;
+          border-radius:0!important;
+          overflow:visible!important;
+          background:transparent!important;
+          box-shadow:none!important;
+          display:grid!important;
+          place-items:center!important;
+          position:relative!important;
+        }
+        .zodiac-circle:before,.zodiac-circle:after{
+          display:none!important;
+          content:none!important;
+          background:none!important;
+          box-shadow:none!important;
+        }
         .zodiac-emoji{
-          width:126px!important;
-          height:126px!important;
+          width:145px!important;
+          height:145px!important;
           display:block!important;
           position:relative!important;
           z-index:2!important;
-          border-radius:50%!important;
+          border:0!important;
+          border-radius:0!important;
           overflow:hidden!important;
           font-size:0!important;
           background-repeat:no-repeat!important;
-          background-color:#f6ead5!important;
-          box-shadow:0 2px 8px rgba(47,34,38,.06)!important;
+          background-color:transparent!important;
+          box-shadow:none!important;
+          filter:none!important;
         }
-        @media(max-width:640px){.zodiac-emoji{width:118px!important;height:118px!important}}
+        @media(max-width:640px){
+          .zodiac-circle,.zodiac-emoji{width:138px!important;height:138px!important}
+        }
       `;
       doc.head.appendChild(style);
     }
@@ -128,7 +147,8 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         target.style.backgroundSize='400% 300%';
         target.style.backgroundPosition=`${pos[0]*100/3}% ${pos[1]*50}%`;
         target.style.backgroundRepeat='no-repeat';
-        target.setAttribute('aria-label',name+' Korean minhwa zodiac illustration');
+        target.style.backgroundColor='transparent';
+        target.setAttribute('aria-label',name+' zodiac illustration');
       };
       render();
       new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
@@ -146,7 +166,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     Promise.resolve()
       .then(()=>loadStyle(doc,'tojung-flat-final-style','./assets/final-polish-20260828.css?v=10'))
       .then(()=>loadStyle(doc,'tojung-blogger-compact-style','./assets/blogger-compact-20260828.css?v=4'))
-      .then(()=>buildZodiacSpriteV3().catch(e=>{console.error('zodiac v3',e);return null}))
+      .then(()=>buildUserZodiacSprite().catch(e=>{console.error('user zodiac',e);return null}))
       .then(sprite=>{
         const img=doc.getElementById('folkArt');
         if(img){
@@ -154,7 +174,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
           img.style.objectFit=window.matchMedia('(max-width:640px)').matches?'contain':'cover';
           img.style.objectPosition=window.matchMedia('(max-width:640px)').matches?'center top':'left center';
         }
-        if(sprite)installZodiacV3(doc,sprite);
+        if(sprite)installUserZodiac(doc,sprite);
         revealFinalUI();
       });
 

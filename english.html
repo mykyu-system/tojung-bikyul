@@ -18,7 +18,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-hojakdo3" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-hojakdo-final1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -31,10 +31,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     './assets/zodiac-user-approved-final.b64.3'
   ];
   const HOJAKDO_FILES=[
-    './assets/hojakdo-main-v3.b64.0',
-    './assets/hojakdo-main-v3.b64.1',
-    './assets/hojakdo-main-v3.b64.2',
-    './assets/hojakdo-main-v3.b64.3'
+    './assets/hojakdo-main-20260829.b64'
   ];
   let ready=false,resultDone=false,settling=false,installing=false;
   let zodiacSpritePromise=null,hojakdoPromise=null;
@@ -75,7 +72,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     return (async()=>{
       const chunks=[];
       for(const file of files){
-        const r=await fetch(file+'?v=20260829-hojakdo3',{cache:'no-store'});
+        const r=await fetch(file+'?v=20260829-hojakdo-final1',{cache:'no-store'});
         if(!r.ok)throw new Error(label+' asset failed: '+file);
         chunks.push((await r.text()).replace(/\s+/g,''));
       }

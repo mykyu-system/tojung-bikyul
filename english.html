@@ -19,12 +19,13 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacnew1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacfinal" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
   const frame=document.getElementById('fortuneViewport');
   const ZODIAC_POS={Rat:[0,0],Ox:[1,0],Tiger:[2,0],Rabbit:[3,0],Dragon:[0,1],Snake:[1,1],Horse:[2,1],Goat:[3,1],Monkey:[0,2],Rooster:[1,2],Dog:[2,2],Pig:[3,2]};
+  const ZODIAC_SPRITE='./assets/zodiac-user-final.webp?v=20260829-zodiacfinal';
   let ready=false;
   let resultDone=false;
   let settling=false;
@@ -76,30 +77,12 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 
   function buildZodiacSprite(){
     if(zodiacSpritePromise)return zodiacSpritePromise;
-    zodiacSpritePromise=(async()=>{
-      const files=[
-        './assets/zodiac-new-v1.b64.0',
-        './assets/zodiac-new-v1.b64.1',
-        './assets/zodiac-new-v1.b64.2',
-        './assets/zodiac-new-v1.b64.3'
-      ];
-      const chunks=[];
-      for(const file of files){
-        const r=await fetch(file+'?v=20260829-zodiacnew1',{cache:'no-store'});
-        if(!r.ok)throw new Error('new zodiac asset failed: '+file);
-        chunks.push((await r.text()).replace(/\s+/g,''));
-      }
-      const data=chunks.join('');
-      if(data.length<100000||!data.startsWith('UklG'))throw new Error('new zodiac sprite invalid');
-      const src='data:image/webp;base64,'+data;
-      await new Promise((resolve,reject)=>{
-        const test=new Image();
-        test.onload=resolve;
-        test.onerror=()=>reject(new Error('new zodiac sprite decode failed'));
-        test.src=src;
-      });
-      return src;
-    })();
+    zodiacSpritePromise=new Promise((resolve,reject)=>{
+      const test=new Image();
+      test.onload=()=>resolve(ZODIAC_SPRITE);
+      test.onerror=()=>reject(new Error('final zodiac sprite failed to load'));
+      test.src=ZODIAC_SPRITE;
+    });
     return zodiacSpritePromise;
   }
 
@@ -162,7 +145,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         const pos=ZODIAC_POS[name];
         if(!pos)return;
         target.textContent='';
-        target.style.backgroundImage=`url(${sprite})`;
+        target.style.backgroundImage=`url("${sprite}")`;
         target.style.backgroundSize='400% 300%';
         target.style.backgroundPosition=`${pos[0]*100/3}% ${pos[1]*50}%`;
         target.style.backgroundRepeat='no-repeat';
@@ -197,7 +180,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         revealFinalUI();
       })
       .catch(e=>{
-        console.error('new zodiac install failed',e);
+        console.error('final zodiac install failed',e);
         revealFinalUI();
       });
 

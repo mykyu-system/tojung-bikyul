@@ -5,33 +5,159 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Tojung Bi Kyul — 144 Korean Fortune Readings</title>
-<style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#efe6d8}#stage{display:block;width:100%;height:100%;border:0;background:#efe6d8}</style>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;overflow:hidden;background:#efe6d8}
+#stage{display:block;width:100%;height:780px;border:0;background:#efe6d8;overflow:hidden}
+</style>
 </head>
 <body>
-<iframe id="stage" src="./english-v4.html?v=20260828-polish6" title="Tojung Bi Kyul" scrolling="yes"></iframe>
+<iframe id="stage" src="./english-v4.html?v=20260828-freeze1" title="Tojung Bi Kyul" scrolling="no"></iframe>
 <script>
 (function(){
   const stage=document.getElementById('stage');
-  function apply(){
+  let frozenHeight=0;
+  let resultMode=false;
+  let observer=null;
+  let stableTimer=null;
+
+  function deep(){
     try{
       const outer=stage.contentDocument;
       const shell=outer&&outer.getElementById('shell');
       const middle=shell&&shell.contentDocument;
       const app=middle&&middle.getElementById('app');
       const doc=app&&app.contentDocument;
-      if(!doc)return false;
-      if(!doc.getElementById('tojung-final-polish-link')){
-        const link=doc.createElement('link');
-        link.id='tojung-final-polish-link';
-        link.rel='stylesheet';
-        link.href='./assets/final-polish-20260828.css?v=3';
-        doc.head.appendChild(link);
-      }
-      return true;
-    }catch(e){return false}
+      if(!outer||!shell||!middle||!app||!doc)return null;
+      return {outer,shell,middle,app,doc};
+    }catch(e){return null}
   }
-  function retry(){let n=0;const t=setInterval(function(){n++;if(apply()||n>50)clearInterval(t)},100)}
+
+  function upsertStyle(doc,id,css){
+    let s=doc.getElementById(id);
+    if(!s){s=doc.createElement('style');s.id=id;doc.head.appendChild(s)}
+    s.textContent=css;
+  }
+
+  function announceHeight(h){
+    try{parent.postMessage({type:'TOJEONG_INITIAL_HEIGHT',height:h,fixed:true},'*')}catch(e){}
+  }
+
+  function lockFrame(refs,mode){
+    if(!refs||!frozenHeight)return;
+    const {outer,shell,middle,app,doc}=refs;
+    const h=frozenHeight;
+
+    upsertStyle(outer,'tojung-shell-freeze',`#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important}`);
+    upsertStyle(middle,'tojung-app-freeze',`#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important}`);
+
+    stage.style.height=h+'px';
+    document.documentElement.style.height=h+'px';
+    document.body.style.height=h+'px';
+
+    stage.setAttribute('scrolling','no');
+    shell.setAttribute('scrolling','no');
+    app.setAttribute('scrolling',mode?'yes':'no');
+
+    try{
+      outer.documentElement.style.overflow='hidden';
+      if(outer.body)outer.body.style.overflow='hidden';
+      middle.documentElement.style.overflow='hidden';
+      if(middle.body)middle.body.style.overflow='hidden';
+      doc.documentElement.style.overflowX='hidden';
+      doc.documentElement.style.overflowY=mode?'auto':'hidden';
+      if(doc.body){doc.body.style.overflowX='hidden';doc.body.style.overflowY=mode?'auto':'hidden'}
+    }catch(e){}
+
+    announceHeight(h);
+  }
+
+  function measureInitial(refs){
+    if(!refs)return 0;
+    const {doc}=refs;
+    const detail=doc.getElementById('detail');
+    if(detail&&detail.classList.contains('show'))return 0;
+    const bodyH=doc.body?doc.body.scrollHeight:0;
+    const htmlH=doc.documentElement?doc.documentElement.scrollHeight:0;
+    return Math.ceil(Math.max(720,bodyH,htmlH)+2);
+  }
+
+  function enterResultMode(refs){
+    if(!frozenHeight||resultMode)return;
+    resultMode=true;
+    lockFrame(refs,true);
+    setTimeout(()=>{
+      try{
+        const current=deep();
+        const target=current&&current.doc.getElementById('result');
+        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
+      }catch(e){}
+    },80);
+  }
+
+  function watchResult(refs){
+    if(observer)observer.disconnect();
+    const detail=refs.doc.getElementById('detail');
+    if(!detail)return;
+    observer=new MutationObserver(()=>{
+      const current=deep();
+      if(!current)return;
+      if(detail.classList.contains('show'))enterResultMode(current);
+    });
+    observer.observe(detail,{attributes:true,attributeFilter:['class']});
+  }
+
+  function stabilize(refs){
+    if(stableTimer)clearInterval(stableTimer);
+    let last=0,same=0,tries=0;
+    stableTimer=setInterval(()=>{
+      tries++;
+      const current=deep();
+      if(!current){if(tries>50)clearInterval(stableTimer);return}
+      const h=measureInitial(current);
+      if(!h)return;
+      if(Math.abs(h-last)<=2)same++;else same=0;
+      last=h;
+      if(same>=3||tries>=30){
+        clearInterval(stableTimer);
+        frozenHeight=h;
+        resultMode=false;
+        watchResult(current);
+        lockFrame(current,false);
+      }
+    },100);
+  }
+
+  function apply(){
+    const refs=deep();
+    if(!refs)return false;
+    const {doc}=refs;
+    let link=doc.getElementById('tojung-final-polish-link');
+    if(!link){
+      link=doc.createElement('link');
+      link.id='tojung-final-polish-link';
+      link.rel='stylesheet';
+      link.href='./assets/final-polish-20260828.css?v=3';
+      link.onload=()=>stabilize(deep());
+      doc.head.appendChild(link);
+    }else{
+      setTimeout(()=>stabilize(deep()),120);
+    }
+    return true;
+  }
+
+  function retry(){
+    let n=0;
+    const t=setInterval(function(){
+      n++;
+      if(apply()||n>60)clearInterval(t);
+    },100);
+  }
+
   stage.addEventListener('load',retry);
+  window.addEventListener('resize',()=>{
+    if(!resultMode){frozenHeight=0;setTimeout(()=>{const r=deep();if(r)stabilize(r)},120)}
+  },{passive:true});
   retry();
 })();
 </script>

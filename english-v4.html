@@ -21,11 +21,11 @@ body{background:
 </style>
 </head>
 <body>
-<iframe id="shell" src="./english-v2.html?v=20260828-luxury2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="shell" src="./english-v2.html?v=20260828-luxury3" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 'use strict';
 const shell=document.getElementById('shell');
-const HERO_URL=new URL('./assets/mockup-left.webp?v=20260828-luxury2',location.href).href;
+const HERO_URL=new URL('./assets/mockup-left.webp?v=20260828-luxury3',location.href).href;
 const SPRITE_PARTS=5;
 const SPRITE_LENGTH=42436;
 const POS={
@@ -226,7 +226,7 @@ async function loadSprite(){
   spritePromise=(async()=>{
     const parts=[];
     for(let i=0;i<SPRITE_PARTS;i++){
-      const r=await fetch(`./assets/zodiac-round-v3.b64.${i}?v=20260828-luxury2`,{cache:'no-store'});
+      const r=await fetch(`./assets/zodiac-round-v3.b64.${i}?v=20260828-luxury3`,{cache:'no-store'});
       if(!r.ok)throw new Error('zodiac medallion part '+i+' failed');
       parts.push((await r.text()).replace(/\s+/g,''));
     }

@@ -19,7 +19,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacfix2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260829-zodiacexact1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -77,14 +77,10 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
   function buildZodiacSprite(){
     if(zodiacSpritePromise)return zodiacSpritePromise;
     zodiacSpritePromise=(async()=>{
-      const chunks=[];
-      for(let i=0;i<4;i++){
-        const r=await fetch(`./assets/zodiac12.b64.${i}?v=20260829-zodiacfix2`,{cache:'no-store'});
-        if(!r.ok)throw new Error('zodiac sprite part '+i+' failed');
-        chunks.push((await r.text()).replace(/\s+/g,''));
-      }
-      const data=chunks.join('');
-      if(data.length<30000||!data.startsWith('UklG'))throw new Error('zodiac sprite invalid');
+      const r=await fetch('./assets/zodiac-user-exact-320.b64?v=20260829-zodiacexact1',{cache:'no-store'});
+      if(!r.ok)throw new Error('exact user zodiac sprite failed');
+      const data=(await r.text()).replace(/\s+/g,'');
+      if(data.length<50000||!data.startsWith('UklG'))throw new Error('exact user zodiac sprite invalid');
       return 'data:image/webp;base64,'+data;
     })();
     return zodiacSpritePromise;
@@ -154,7 +150,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         target.style.backgroundPosition=`${pos[0]*100/3}% ${pos[1]*50}%`;
         target.style.backgroundRepeat='no-repeat';
         target.style.backgroundColor='transparent';
-        target.setAttribute('aria-label',name+' minhwa zodiac illustration');
+        target.setAttribute('aria-label',name+' zodiac illustration');
       };
       render();
       new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
@@ -184,7 +180,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
         revealFinalUI();
       })
       .catch(e=>{
-        console.error('zodiac install failed',e);
+        console.error('exact zodiac install failed',e);
         revealFinalUI();
       });
 

@@ -19,15 +19,17 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat4" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat5" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
   const frame=document.getElementById('fortuneViewport');
+  const ZODIAC_POS={Rat:[0,0],Ox:[1,0],Tiger:[2,0],Rabbit:[3,0],Dragon:[0,1],Snake:[1,1],Horse:[2,1],Goat:[3,1],Monkey:[0,2],Rooster:[1,2],Dog:[2,2],Pig:[3,2]};
   let ready=false;
   let resultDone=false;
   let settling=false;
   let installing=false;
+  let zodiacSpritePromise=null;
 
   function initialHeight(){
     if(window.matchMedia('(max-width:640px)').matches)return 1180;
@@ -72,6 +74,70 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     });
   }
 
+  function buildZodiacSpriteV3(){
+    if(zodiacSpritePromise)return zodiacSpritePromise;
+    zodiacSpritePromise=(async()=>{
+      const chunks=[];
+      for(let i=0;i<5;i++){
+        const r=await fetch(`./assets/zodiac-round-v3.b64.${i}?v=20260828-zodiac-v3`,{cache:'no-store'});
+        if(!r.ok)throw new Error('zodiac v3 asset '+i+' failed');
+        chunks.push((await r.text()).replace(/\s+/g,''));
+      }
+      const data=chunks.join('');
+      if(data.length<40000)throw new Error('zodiac v3 asset incomplete');
+      return 'data:image/webp;base64,'+data;
+    })();
+    return zodiacSpritePromise;
+  }
+
+  function installZodiacV3(doc,sprite){
+    if(!doc||!sprite)return;
+    let style=doc.getElementById('tojung-zodiac-v3-style');
+    if(!style){
+      style=doc.createElement('style');
+      style.id='tojung-zodiac-v3-style';
+      style.textContent=`
+        .zodiac-emoji{
+          width:126px!important;
+          height:126px!important;
+          display:block!important;
+          position:relative!important;
+          z-index:2!important;
+          border-radius:50%!important;
+          overflow:hidden!important;
+          font-size:0!important;
+          background-repeat:no-repeat!important;
+          background-color:#f6ead5!important;
+          box-shadow:0 2px 8px rgba(47,34,38,.06)!important;
+        }
+        @media(max-width:640px){.zodiac-emoji{width:118px!important;height:118px!important}}
+      `;
+      doc.head.appendChild(style);
+    }
+
+    const bind=(nameId,targetId)=>{
+      const nameEl=doc.getElementById(nameId);
+      const target=doc.getElementById(targetId);
+      if(!nameEl||!target)return;
+      const render=()=>{
+        const name=(nameEl.textContent||'').trim();
+        const pos=ZODIAC_POS[name];
+        if(!pos)return;
+        target.textContent='';
+        target.style.backgroundImage=`url(${sprite})`;
+        target.style.backgroundSize='400% 300%';
+        target.style.backgroundPosition=`${pos[0]*100/3}% ${pos[1]*50}%`;
+        target.style.backgroundRepeat='no-repeat';
+        target.setAttribute('aria-label',name+' Korean minhwa zodiac illustration');
+      };
+      render();
+      new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
+    };
+
+    bind('yearZodiac','yearEmoji');
+    bind('dayZodiac','dayEmoji');
+  }
+
   function installFinalStyle(){
     const doc=childDoc();
     if(!doc||!doc.head||installing)return !!doc;
@@ -80,17 +146,19 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     Promise.resolve()
       .then(()=>loadStyle(doc,'tojung-flat-final-style','./assets/final-polish-20260828.css?v=10'))
       .then(()=>loadStyle(doc,'tojung-blogger-compact-style','./assets/blogger-compact-20260828.css?v=4'))
-      .then(()=>{
+      .then(()=>buildZodiacSpriteV3().catch(e=>{console.error('zodiac v3',e);return null}))
+      .then(sprite=>{
         const img=doc.getElementById('folkArt');
         if(img){
           img.src='./assets/mockup-left.webp?v=20260828-flat4';
           img.style.objectFit=window.matchMedia('(max-width:640px)').matches?'contain':'cover';
           img.style.objectPosition=window.matchMedia('(max-width:640px)').matches?'center top':'left center';
         }
+        if(sprite)installZodiacV3(doc,sprite);
         revealFinalUI();
       });
 
-    setTimeout(revealFinalUI,2500);
+    setTimeout(revealFinalUI,3000);
     return true;
   }
 

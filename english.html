@@ -12,14 +12,14 @@
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
-#fortuneViewport{display:block;width:100%;height:620px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden;visibility:hidden;opacity:0;transition:opacity .12s ease}
+#fortuneViewport{display:block;width:100%;height:620px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden;visibility:hidden;opacity:0;transition:opacity .1s ease}
 #fortuneViewport.ready{visibility:visible;opacity:1}
 @media(max-width:1000px) and (min-width:641px){#fortuneViewport{height:524px}}
 @media(max-width:640px){#fortuneViewport{height:1180px}}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
+<iframe id="fortuneViewport" src="./english-app7.html?v=20260828-flat2" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
   'use strict';
@@ -27,6 +27,7 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
   let ready=false;
   let resultDone=false;
   let settling=false;
+  let installing=false;
 
   function initialHeight(){
     if(window.matchMedia('(max-width:640px)').matches)return 1180;
@@ -42,7 +43,6 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
     try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:h,mode:mode||'initial'},'*')}catch(e){}
   }
 
-  /* Fix the outer Blogger frame before any inner UI becomes visible. */
   applyHeight(initialHeight(),'initial');
 
   function childDoc(){
@@ -52,44 +52,45 @@ html,body{margin:0;padding:0;width:100%;overflow:hidden;background:#efe6d8}
   function revealFinalUI(){
     if(ready)return;
     ready=true;
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      frame.classList.add('ready');
-    }));
+    requestAnimationFrame(()=>requestAnimationFrame(()=>frame.classList.add('ready')));
+  }
+
+  function loadStyle(doc,id,href){
+    return new Promise(resolve=>{
+      let link=doc.getElementById(id);
+      if(link){
+        try{if(link.sheet){resolve();return}}catch(e){}
+      }else{
+        link=doc.createElement('link');
+        link.id=id;
+        link.rel='stylesheet';
+        link.href=href;
+        doc.head.appendChild(link);
+      }
+      link.addEventListener('load',resolve,{once:true});
+      link.addEventListener('error',resolve,{once:true});
+    });
   }
 
   function installFinalStyle(){
     const doc=childDoc();
-    if(!doc||!doc.head)return false;
+    if(!doc||!doc.head||installing)return !!doc;
+    installing=true;
 
-    let link=doc.getElementById('tojung-flat-final-style');
-    if(!link){
-      link=doc.createElement('link');
-      link.id='tojung-flat-final-style';
-      link.rel='stylesheet';
-      link.href='./assets/final-polish-20260828.css?v=8';
-      doc.head.appendChild(link);
-    }
+    Promise.resolve()
+      .then(()=>loadStyle(doc,'tojung-flat-final-style','./assets/final-polish-20260828.css?v=9'))
+      .then(()=>loadStyle(doc,'tojung-blogger-compact-style','./assets/blogger-compact-20260828.css?v=1'))
+      .then(()=>{
+        const img=doc.getElementById('folkArt');
+        if(img){
+          img.src='./assets/mockup-left.webp?v=20260828-flat2';
+          img.style.objectFit='contain';
+          img.style.objectPosition=window.matchMedia('(max-width:640px)').matches?'center top':'left center';
+        }
+        revealFinalUI();
+      });
 
-    let finished=false;
-    const done=()=>{
-      if(finished)return;
-      finished=true;
-      const img=doc.getElementById('folkArt');
-      if(img){
-        img.src='./assets/mockup-left.webp?v=20260828-flat1';
-        img.style.objectFit='contain';
-        img.style.objectPosition=window.matchMedia('(max-width:640px)').matches?'center top':'left center';
-      }
-      revealFinalUI();
-    };
-
-    try{
-      if(link.sheet)done();
-      else link.addEventListener('load',done,{once:true});
-    }catch(e){
-      link.addEventListener('load',done,{once:true});
-    }
-    setTimeout(done,1200);
+    setTimeout(revealFinalUI,2500);
     return true;
   }
 

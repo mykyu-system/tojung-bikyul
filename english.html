@@ -11,23 +11,37 @@
 <title>Tojung Bi Kyul — 144 Korean Fortune Readings</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#efe6d8}
-#fortuneViewport{display:block;width:100%;height:100%;border:0;margin:0;padding:0;background:#efe6d8}
+html,body{margin:0;padding:0;width:100%;min-height:100%;overflow:hidden;background:#efe6d8}
+#fortuneViewport{display:block;width:100%;height:780px;border:0;margin:0;padding:0;background:#efe6d8;overflow:hidden}
 </style>
 </head>
 <body>
-<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-final1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="yes"></iframe>
+<iframe id="fortuneViewport" src="./english-polish.html?v=20260828-freeze1" title="Tojung Bi Kyul — 144 Korean Fortune Readings" loading="eager" scrolling="no"></iframe>
 <script>
 (function(){
-  function frameHeight(){return window.matchMedia('(max-width:640px)').matches?700:780}
-  function tellParent(){
-    try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:frameHeight(),fixed:true},'*')}catch(e){}
+  const frame=document.getElementById('fortuneViewport');
+  let lockedHeight=0;
+
+  function clampHeight(v){return Math.max(700,Math.min(6000,Math.ceil(Number(v)||780)))}
+
+  function applyHeight(v){
+    const h=clampHeight(v);
+    lockedHeight=h;
+    frame.style.height=h+'px';
+    document.documentElement.style.height=h+'px';
+    document.body.style.height=h+'px';
+    try{parent.postMessage({type:'TOJEONG_EMBED_HEIGHT',height:h,fixed:true},'*')}catch(e){}
   }
-  tellParent();
-  window.addEventListener('load',tellParent);
-  window.addEventListener('resize',tellParent,{passive:true});
-  setTimeout(tellParent,250);
-  setTimeout(tellParent,1000);
+
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='TOJEONG_INITIAL_HEIGHT')return;
+    applyHeight(e.data.height);
+  });
+
+  function fallback(){if(!lockedHeight)applyHeight(window.matchMedia('(max-width:640px)').matches?1200:1240)}
+
+  window.addEventListener('load',()=>setTimeout(fallback,1600));
+  setTimeout(fallback,2200);
 })();
 </script>
 </body>

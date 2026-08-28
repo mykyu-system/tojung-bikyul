@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Tojung Bi Kyul — Final Zodiac Medallions</title>
+<style>
+html,body{margin:0;padding:0;background:#efe5d3;overflow-x:hidden}
+#shell{display:block;width:100%;height:1900px;min-height:100vh;border:0;background:#efe5d3}
+</style>
+</head>
+<body>
+<iframe id="shell" src="./english-v2.html?v=20260828-canva1" title="Tojung Bi Kyul 144 Readings Fortune Calculator" loading="eager" scrolling="no"></iframe>
+<script>
+'use strict';
+const shell=document.getElementById('shell');
+const SPRITE_URL='./assets/zodiac-canva-final.jpg?v=20260828-canva1';
+const POS={
+ Rat:[0,0],Ox:[1,0],Tiger:[2,0],Rabbit:[3,0],
+ Dragon:[0,1],Snake:[1,1],Horse:[2,1],Goat:[3,1],
+ Monkey:[0,2],Rooster:[1,2],Dog:[2,2],Pig:[3,2]
+};
+let started=false,heightTimer=null;
+
+function deep(){
+  try{
+    const outer=shell.contentDocument;
+    const app=outer&&outer.getElementById('app');
+    return {outer,app,doc:app&&app.contentDocument};
+  }catch(e){return {outer:null,app:null,doc:null}}
+}
+
+function syncHeight(){
+  try{
+    const outer=shell.contentDocument;
+    if(!outer)return;
+    const h=Math.max(1000,outer.body?.scrollHeight||0,outer.documentElement?.scrollHeight||0);
+    shell.style.height=Math.min(14000,h)+'px';
+  }catch(e){}
+}
+
+function installStyle(doc){
+  if(doc.getElementById('final-zodiac-medallion-style'))return;
+  const s=doc.createElement('style');
+  s.id='final-zodiac-medallion-style';
+  s.textContent=`
+    .zodiac-circle{
+      width:150px!important;height:150px!important;
+      border:0!important;background:transparent!important;
+      box-shadow:none!important;overflow:visible!important;
+      display:grid!important;place-items:center!important
+    }
+    .zodiac-circle:before,.zodiac-circle:after{display:none!important}
+    .zodiac-emoji{
+      width:140px!important;height:140px!important;
+      border-radius:50%!important;
+      background-color:#f6ead7!important;
+      background-repeat:no-repeat!important;
+      box-shadow:0 7px 18px rgba(67,43,34,.13)!important;
+      filter:none!important;overflow:hidden!important;
+      opacity:0!important;
+      transition:opacity .14s ease!important
+    }
+    .zodiac-emoji.zodiac-ready{opacity:1!important}
+    @media(max-width:1000px){
+      .zodiac-circle{width:144px!important;height:144px!important}
+      .zodiac-emoji{width:134px!important;height:134px!important}
+    }
+    @media(max-width:640px){
+      .zodiac-circle{width:144px!important;height:144px!important}
+      .zodiac-emoji{width:134px!important;height:134px!important}
+    }
+  `;
+  doc.head.appendChild(s);
+}
+
+function bindAnimal(doc,nameId,targetId){
+  const nameEl=doc.getElementById(nameId),target=doc.getElementById(targetId);
+  if(!nameEl||!target)return;
+  const render=()=>requestAnimationFrame(()=>{
+    const name=(nameEl.textContent||'').trim();
+    const p=POS[name];
+    if(!p)return;
+    target.textContent='';
+    target.style.backgroundImage=`url("${SPRITE_URL}")`;
+    target.style.backgroundSize='400% 300%';
+    target.style.backgroundPosition=`${p[0]*100/3}% ${p[1]*50}%`;
+    target.style.backgroundRepeat='no-repeat';
+    target.style.backgroundColor='#f6ead7';
+    target.classList.add('zodiac-ready');
+    target.setAttribute('aria-label',name+' full-body traditional zodiac medallion');
+  });
+  render();
+  new MutationObserver(render).observe(nameEl,{childList:true,characterData:true,subtree:true});
+}
+
+async function start(){
+  if(started)return;
+  const {outer,app,doc}=deep();
+  if(!outer||!app||!doc){setTimeout(start,70);return}
+  started=true;
+  installStyle(doc);
+
+  const y=doc.getElementById('yearEmoji'),d=doc.getElementById('dayEmoji');
+  if(y)y.classList.remove('zodiac-ready');
+  if(d)d.classList.remove('zodiac-ready');
+
+  const preload=new Image();
+  preload.onload=()=>{
+    bindAnimal(doc,'yearZodiac','yearEmoji');
+    bindAnimal(doc,'dayZodiac','dayEmoji');
+    syncHeight();
+  };
+  preload.onerror=()=>console.error('final zodiac artwork failed to load');
+  preload.src=SPRITE_URL;
+  if(preload.complete&&preload.naturalWidth)preload.onload();
+
+  try{
+    const ro=new ResizeObserver(syncHeight);
+    ro.observe(outer.documentElement);
+    if(outer.body)ro.observe(outer.body);
+  }catch(e){}
+  syncHeight();
+  heightTimer=setInterval(syncHeight,600);
+}
+
+shell.addEventListener('load',()=>{
+  started=false;
+  if(heightTimer){clearInterval(heightTimer);heightTimer=null}
+  start();
+  syncHeight();
+});
+window.addEventListener('beforeunload',()=>{if(heightTimer)clearInterval(heightTimer)});
+</script>
+</body>
+</html>

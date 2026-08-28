@@ -28,20 +28,22 @@ input:focus,select:focus{border-color:#715080!important;box-shadow:0 0 0 3px rgb
 }
 @media (max-width:1000px) and (min-width:641px){
 .app{padding:8px!important}
-.top{grid-template-columns:minmax(300px,41%) minmax(0,1fr)!important;min-height:604px!important;height:604px!important;max-height:604px!important;align-items:stretch!important;border-radius:12px!important}
-.art{min-height:604px!important;height:604px!important;max-height:604px!important;align-self:stretch!important;background:#e9dcc7!important;overflow:hidden!important}
+.top{grid-template-columns:minmax(300px,41%) minmax(0,1fr)!important;min-height:508px!important;height:508px!important;max-height:508px!important;align-items:stretch!important;border-radius:12px!important}
+.art{min-height:508px!important;height:508px!important;max-height:508px!important;align-self:stretch!important;background:#e9dcc7!important;overflow:hidden!important}
 .art:before{display:none!important}
 .art img{width:100%!important;height:100%!important;min-height:0!important;object-fit:contain!important;object-position:left center!important;background:#e9dcc7!important}
-.form-panel{justify-content:center!important;align-self:stretch!important;height:604px!important;min-height:604px!important;max-height:604px!important;padding:16px 14px!important}
+.form-panel{justify-content:center!important;align-self:stretch!important;height:508px!important;min-height:508px!important;max-height:508px!important;padding:10px 14px!important}
 .form-panel:before{display:none!important}
-.privacy{position:static!important;width:100%!important;margin:0 0 8px!important;padding:0!important;border:0!important;background:transparent!important;text-align:center!important;font-size:9px!important}
-.form-box{border-radius:8px!important;padding:14px 12px 13px!important}
-.form-title{display:flex!important;justify-content:center!important;align-items:center!important;gap:8px!important;text-align:center!important;font-size:24px!important;margin-bottom:13px!important}
-.form-title:before,.form-title:after{display:inline-block!important;content:"☁"!important;color:#b18a54!important;font-size:14px!important;margin:0!important}
-.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px 9px!important}
+.privacy{position:static!important;width:100%!important;margin:0 0 6px!important;padding:0!important;border:0!important;background:transparent!important;text-align:center!important;font-size:8.5px!important}
+.form-box{border-radius:8px!important;padding:11px 12px 10px!important}
+.form-title{display:flex!important;justify-content:center!important;align-items:center!important;gap:8px!important;text-align:center!important;font-size:22px!important;margin:0 0 10px!important}
+.form-title:before,.form-title:after{display:inline-block!important;content:"☁"!important;color:#b18a54!important;font-size:13px!important;margin:0!important}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px 9px!important}
 .field:last-child{grid-column:1/-1!important}
-input,select,.gender button{height:38px!important;border-radius:5px!important;font-size:11px!important}
-.reveal{height:48px!important;border-radius:5px!important;font-size:17px!important;margin-top:11px!important}
+label{margin-bottom:3px!important;font-size:9.5px!important}
+input,select,.gender button{height:34px!important;border-radius:5px!important;font-size:10.5px!important}
+.reveal{height:44px!important;border-radius:5px!important;font-size:16px!important;margin-top:8px!important}
+.status{margin-top:5px!important;font-size:8.5px!important}
 }
 @media (max-width:640px){
 .app{padding:6px!important}

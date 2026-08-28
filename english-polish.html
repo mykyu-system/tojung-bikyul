@@ -9,12 +9,12 @@
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
 #stage{display:block;width:100%;height:620px;border:0;background:#efe6d8;overflow:hidden}
-@media(max-width:1000px) and (min-width:641px){#stage{height:607px}}
+@media(max-width:1000px) and (min-width:641px){#stage{height:524px}}
 @media(max-width:640px){#stage{height:1180px}}
 </style>
 </head>
 <body>
-<iframe id="stage" src="./english-v4.html?v=20260828-bottom607" title="Tojung Bi Kyul" scrolling="no"></iframe>
+<iframe id="stage" src="./english-v4.html?v=20260828-compact1" title="Tojung Bi Kyul" scrolling="no"></iframe>
 <script>
 (function(){
   const stage=document.getElementById('stage');
@@ -24,7 +24,7 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
 
   function initialHeight(){
     if(window.matchMedia('(max-width:640px)').matches)return 1180;
-    if(window.matchMedia('(max-width:1000px)').matches)return 607;
+    if(window.matchMedia('(max-width:1000px)').matches)return 524;
     return 620;
   }
 
@@ -119,7 +119,7 @@ html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
       link=refs.doc.createElement('link');
       link.id='tojung-final-polish-link';
       link.rel='stylesheet';
-      link.href='./assets/final-polish-20260828.css?v=5';
+      link.href='./assets/final-polish-20260828.css?v=6';
       refs.doc.head.appendChild(link);
     }
     freezeAll(refs,initialHeight());

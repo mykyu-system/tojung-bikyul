@@ -7,19 +7,19 @@
 <title>Tojung Bi Kyul — 144 Korean Fortune Readings</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;overflow:hidden;background:#efe6d8}
-#stage{display:block;width:100%;height:780px;border:0;background:#efe6d8;overflow:hidden}
+html,body{margin:0;width:100%;overflow:hidden;background:#efe6d8}
+#stage{display:block;width:100%;height:980px;border:0;background:#efe6d8;overflow:hidden}
 </style>
 </head>
 <body>
-<iframe id="stage" src="./english-v4.html?v=20260828-freeze1" title="Tojung Bi Kyul" scrolling="no"></iframe>
+<iframe id="stage" src="./english-v4.html?v=20260828-state2" title="Tojung Bi Kyul" scrolling="no"></iframe>
 <script>
 (function(){
   const stage=document.getElementById('stage');
-  let frozenHeight=0;
-  let resultMode=false;
+  let mode='initial';
+  let initialHeight=0;
   let observer=null;
-  let stableTimer=null;
+  let initialTimer=null;
 
   function deep(){
     try{
@@ -33,131 +33,133 @@ html,body{margin:0;width:100%;min-height:100%;overflow:hidden;background:#efe6d8
     }catch(e){return null}
   }
 
-  function upsertStyle(doc,id,css){
-    let s=doc.getElementById(id);
-    if(!s){s=doc.createElement('style');s.id=id;doc.head.appendChild(s)}
-    s.textContent=css;
+  function style(doc,id,css){
+    let el=doc.getElementById(id);
+    if(!el){el=doc.createElement('style');el.id=id;doc.head.appendChild(el)}
+    el.textContent=css;
   }
 
-  function announceHeight(h){
-    try{parent.postMessage({type:'TOJEONG_INITIAL_HEIGHT',height:h,fixed:true},'*')}catch(e){}
-  }
-
-  function lockFrame(refs,mode){
-    if(!refs||!frozenHeight)return;
-    const {outer,shell,middle,app,doc}=refs;
-    const h=frozenHeight;
-
-    upsertStyle(outer,'tojung-shell-freeze',`#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important}`);
-    upsertStyle(middle,'tojung-app-freeze',`#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important}`);
-
+  function setLayerHeights(refs,h){
+    h=Math.max(720,Math.min(20000,Math.ceil(h)));
+    style(refs.outer,'tojung-state-shell',`html,body{overflow:hidden!important}#shell{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
+    style(refs.middle,'tojung-state-app',`html,body{overflow:hidden!important}#app{height:${h}px!important;min-height:${h}px!important;max-height:${h}px!important;overflow:hidden!important}`);
     stage.style.height=h+'px';
     document.documentElement.style.height=h+'px';
     document.body.style.height=h+'px';
-
     stage.setAttribute('scrolling','no');
-    shell.setAttribute('scrolling','no');
-    app.setAttribute('scrolling',mode?'yes':'no');
-
+    refs.shell.setAttribute('scrolling','no');
+    refs.app.setAttribute('scrolling','no');
     try{
-      outer.documentElement.style.overflow='hidden';
-      if(outer.body)outer.body.style.overflow='hidden';
-      middle.documentElement.style.overflow='hidden';
-      if(middle.body)middle.body.style.overflow='hidden';
-      doc.documentElement.style.overflowX='hidden';
-      doc.documentElement.style.overflowY=mode?'auto':'hidden';
-      if(doc.body){doc.body.style.overflowX='hidden';doc.body.style.overflowY=mode?'auto':'hidden'}
+      refs.doc.documentElement.style.overflow='hidden';
+      refs.doc.body.style.overflow='hidden';
     }catch(e){}
-
-    announceHeight(h);
+    return h;
   }
 
-  function measureInitial(refs){
-    if(!refs)return 0;
-    const {doc}=refs;
+  function announce(type,h){
+    try{parent.postMessage({type,height:h,mode:mode},'*')}catch(e){}
+  }
+
+  function contentBottom(doc){
+    const result=doc.getElementById('result');
+    if(!result)return 0;
+    const r=result.getBoundingClientRect();
+    const y=doc.defaultView?doc.defaultView.scrollY:0;
+    const app=doc.querySelector('.app');
+    let pad=16;
+    try{if(app)pad=parseFloat(doc.defaultView.getComputedStyle(app).paddingBottom)||16}catch(e){}
+    return Math.ceil(r.bottom+y+pad+4);
+  }
+
+  function resultBottom(doc){
+    const result=doc.getElementById('result');
     const detail=doc.getElementById('detail');
-    if(detail&&detail.classList.contains('show'))return 0;
-    const bodyH=doc.body?doc.body.scrollHeight:0;
-    const htmlH=doc.documentElement?doc.documentElement.scrollHeight:0;
-    return Math.ceil(Math.max(720,bodyH,htmlH)+2);
+    const target=(detail&&detail.classList.contains('show'))?result:null;
+    if(!target)return 0;
+    const r=target.getBoundingClientRect();
+    const y=doc.defaultView?doc.defaultView.scrollY:0;
+    const app=doc.querySelector('.app');
+    let pad=20;
+    try{if(app)pad=parseFloat(doc.defaultView.getComputedStyle(app).paddingBottom)||20}catch(e){}
+    return Math.ceil(r.bottom+y+pad+8);
   }
 
-  function enterResultMode(refs){
-    if(!frozenHeight||resultMode)return;
-    resultMode=true;
-    lockFrame(refs,true);
-    setTimeout(()=>{
-      try{
-        const current=deep();
-        const target=current&&current.doc.getElementById('result');
-        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
-      }catch(e){}
-    },80);
+  function lockInitial(refs){
+    if(mode!=='initial'||initialHeight)return;
+    const h=contentBottom(refs.doc);
+    if(!h)return;
+    initialHeight=setLayerHeights(refs,h);
+    announce('TOJEONG_INITIAL_LOCK',initialHeight);
   }
 
-  function watchResult(refs){
+  function scheduleInitial(refs){
+    if(initialTimer)clearTimeout(initialTimer);
+    initialTimer=setTimeout(()=>{
+      const r=deep();
+      if(!r||mode!=='initial'||initialHeight)return;
+      lockInitial(r);
+    },420);
+  }
+
+  function expandResult(refs){
+    if(mode==='result')return;
+    mode='result';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const current=deep();
+      if(!current)return;
+      const h=resultBottom(current.doc);
+      if(!h)return;
+      const finalH=setLayerHeights(current,h);
+      announce('TOJEONG_RESULT_EXPAND',finalH);
+      setTimeout(()=>{
+        const again=deep();
+        if(!again)return;
+        const h2=resultBottom(again.doc);
+        if(h2>finalH+4){
+          const final2=setLayerHeights(again,h2);
+          announce('TOJEONG_RESULT_EXPAND',final2);
+        }
+      },180);
+    }));
+  }
+
+  function watch(refs){
     if(observer)observer.disconnect();
     const detail=refs.doc.getElementById('detail');
     if(!detail)return;
     observer=new MutationObserver(()=>{
-      const current=deep();
-      if(!current)return;
-      if(detail.classList.contains('show'))enterResultMode(current);
+      const r=deep();
+      if(r&&detail.classList.contains('show'))expandResult(r);
     });
     observer.observe(detail,{attributes:true,attributeFilter:['class']});
-  }
-
-  function stabilize(refs){
-    if(stableTimer)clearInterval(stableTimer);
-    let last=0,same=0,tries=0;
-    stableTimer=setInterval(()=>{
-      tries++;
-      const current=deep();
-      if(!current){if(tries>50)clearInterval(stableTimer);return}
-      const h=measureInitial(current);
-      if(!h)return;
-      if(Math.abs(h-last)<=2)same++;else same=0;
-      last=h;
-      if(same>=3||tries>=30){
-        clearInterval(stableTimer);
-        frozenHeight=h;
-        resultMode=false;
-        watchResult(current);
-        lockFrame(current,false);
-      }
-    },100);
   }
 
   function apply(){
     const refs=deep();
     if(!refs)return false;
-    const {doc}=refs;
-    let link=doc.getElementById('tojung-final-polish-link');
+    let link=refs.doc.getElementById('tojung-final-polish-link');
     if(!link){
-      link=doc.createElement('link');
+      link=refs.doc.createElement('link');
       link.id='tojung-final-polish-link';
       link.rel='stylesheet';
       link.href='./assets/final-polish-20260828.css?v=3';
-      link.onload=()=>stabilize(deep());
-      doc.head.appendChild(link);
-    }else{
-      setTimeout(()=>stabilize(deep()),120);
+      refs.doc.head.appendChild(link);
+      link.addEventListener('load',()=>scheduleInitial(deep()),{once:true});
     }
+    watch(refs);
+    scheduleInitial(refs);
     return true;
   }
 
   function retry(){
     let n=0;
-    const t=setInterval(function(){
+    const t=setInterval(()=>{
       n++;
       if(apply()||n>60)clearInterval(t);
     },100);
   }
 
   stage.addEventListener('load',retry);
-  window.addEventListener('resize',()=>{
-    if(!resultMode){frozenHeight=0;setTimeout(()=>{const r=deep();if(r)stabilize(r)},120)}
-  },{passive:true});
   retry();
 })();
 </script>

@@ -4,7 +4,7 @@
 .top:after{inset:6px!important;border-radius:10px!important;border-color:rgba(255,255,255,.48)!important}
 .art{min-height:604px!important;height:604px!important;max-height:604px!important;align-self:stretch!important;align-items:stretch!important;justify-content:flex-start!important;background:#e9dcc7!important;border-right:1px solid rgba(149,119,84,.34)!important;overflow:hidden!important}
 .art:before{display:none!important}
-.art img{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;display:block!important;object-fit:contain!important;object-position:left center!important;background:#e9dcc7!important;filter:saturate(.97) contrast(1.015)!important}
+.art img{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;display:block!important;object-fit:cover!important;object-position:left center!important;background:#e9dcc7!important;filter:saturate(.97) contrast(1.015)!important}
 .form-panel{display:flex!important;flex-direction:column!important;justify-content:center!important;align-self:stretch!important;height:604px!important;min-height:604px!important;max-height:604px!important;padding:20px 26px!important;background:radial-gradient(circle at 96% 0%,rgba(82,49,96,.045),transparent 24%),linear-gradient(180deg,#fffdfa 0%,#faf4eb 100%)!important}
 .form-panel:before{display:none!important}
 .privacy{position:static!important;display:block!important;width:100%!important;margin:0 0 10px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;text-align:center!important;color:#746a70!important;font-size:9.5px!important;font-weight:600!important;letter-spacing:.012em!important}
@@ -31,7 +31,7 @@ input:focus,select:focus{border-color:#715080!important;box-shadow:0 0 0 3px rgb
 .top{grid-template-columns:minmax(300px,41%) minmax(0,1fr)!important;min-height:508px!important;height:508px!important;max-height:508px!important;align-items:stretch!important;border-radius:12px!important}
 .art{min-height:508px!important;height:508px!important;max-height:508px!important;align-self:stretch!important;background:#e9dcc7!important;overflow:hidden!important}
 .art:before{display:none!important}
-.art img{width:100%!important;height:100%!important;min-height:0!important;object-fit:contain!important;object-position:left center!important;background:#e9dcc7!important}
+.art img{width:100%!important;height:100%!important;min-height:0!important;object-fit:cover!important;object-position:left center!important;background:#e9dcc7!important}
 .form-panel{justify-content:center!important;align-self:stretch!important;height:508px!important;min-height:508px!important;max-height:508px!important;padding:10px 14px!important}
 .form-panel:before{display:none!important}
 .privacy{position:static!important;width:100%!important;margin:0 0 6px!important;padding:0!important;border:0!important;background:transparent!important;text-align:center!important;font-size:8.5px!important}

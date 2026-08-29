@@ -1,0 +1,63 @@
+name: Convert Hojakdo to PNG
+on:
+  push:
+    paths:
+      - '.github/workflows/convert-hojakdo-png.yml'
+permissions:
+  contents: write
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Convert and validate Hojakdo
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          p=Path('assets/hojakdo-current.webp')
+          im=Image.open(p)
+          im.load()
+          print('SOURCE', im.format, im.size, im.mode)
+          if im.size[0] < 100 or im.size[1] < 100:
+              raise SystemExit('invalid image size')
+          if im.mode not in ('RGB','RGBA'):
+              im=im.convert('RGBA')
+          im.save('assets/hojakdo-current.png','PNG',optimize=True)
+          check=Image.open('assets/hojakdo-current.png')
+          check.load()
+          print('PNG', check.format, check.size, check.mode)
+          PY
+      - name: Point app to PNG only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('english-app7.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('./assets/hojakdo-current.webp?v=20260829-direct2','./assets/hojakdo-current.png?v=20260829-png1')
+          s=s.replace('./assets/hojakdo-current.webp','./assets/hojakdo-current.png')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('english.html')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("const HOJAKDO_FALLBACK='./assets/hojakdo-current.webp?cb='+Date.now();","const HOJAKDO_FALLBACK='./assets/hojakdo-current.png?cb='+Date.now();")
+          s=s.replace('./english-app7.html?v=20260829-direct2','./english-app7.html?v=20260829-png1')
+          p.write_text(s,encoding='utf-8')
+
+          p=Path('assets/blogger-compact-20260828.css')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace("hojakdo-current.webp?v=20260829-bg1","hojakdo-current.png?v=20260829-png1")
+          p.write_text(s,encoding='utf-8')
+          PY
+      - name: Commit PNG fix
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/hojakdo-current.png english-app7.html english.html assets/blogger-compact-20260828.css
+          git diff --cached --quiet && exit 0
+          git commit -m 'Use PNG Hojakdo for reliable rendering'
+          git push

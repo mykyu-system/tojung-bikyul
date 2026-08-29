@@ -1,3 +1,5 @@
+.art-fallback{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+.art img#folkArt{position:relative!important;z-index:3!important;display:block!important;visibility:visible!important;opacity:1!important}
 @media (max-width:1000px) and (min-width:641px){
 html,body{overflow:hidden!important;background:#efe6d8!important}
 .app{width:min(1180px,100%)!important;margin:0 auto!important;padding:8px!important}

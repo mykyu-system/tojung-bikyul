@@ -1,11 +1,12 @@
 .art-fallback{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+.art{background-color:#e9dcc7!important;background-image:url('hojakdo-current.webp?v=20260829-bg1')!important;background-repeat:no-repeat!important;background-size:cover!important;background-position:left center!important}
 .art img#folkArt{position:relative!important;z-index:3!important;display:block!important;visibility:visible!important;opacity:1!important}
 @media (max-width:1000px) and (min-width:641px){
 html,body{overflow:hidden!important;background:#efe6d8!important}
 .app{width:min(1180px,100%)!important;margin:0 auto!important;padding:8px!important}
 .top{display:grid!important;grid-template-columns:232px minmax(0,1fr)!important;height:508px!important;min-height:508px!important;max-height:508px!important;align-items:stretch!important;overflow:hidden!important;border-radius:12px!important}
-.art{width:232px!important;height:508px!important;min-width:232px!important;max-width:232px!important;min-height:508px!important;max-height:508px!important;align-self:stretch!important;overflow:hidden!important;background:#e9dcc7!important}
-.art img{display:block!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;object-fit:cover!important;object-position:left center!important;background:#e9dcc7!important}
+.art{width:232px!important;height:508px!important;min-width:232px!important;max-width:232px!important;min-height:508px!important;max-height:508px!important;align-self:stretch!important;overflow:hidden!important}
+.art img{display:block!important;width:100%!important;height:100%!important;min-height:0!important;max-height:none!important;object-fit:cover!important;object-position:left center!important;background:transparent!important}
 .form-panel{display:flex!important;flex-direction:column!important;justify-content:flex-start!important;align-self:stretch!important;height:508px!important;min-height:508px!important;max-height:508px!important;padding:7px 8px 7px!important;overflow:hidden!important;background:linear-gradient(180deg,#fffdf9 0%,#faf4eb 100%)!important}
 .form-panel:before{display:none!important}
 .privacy{position:static!important;flex:0 0 auto!important;display:block!important;width:100%!important;margin:0 0 4px!important;padding:0!important;border:0!important;background:transparent!important;text-align:center!important;color:#746a70!important;font-size:8px!important;line-height:1.1!important}

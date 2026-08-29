@@ -1,0 +1,49 @@
+name: Apply Clean Zodiac Live
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-clean-zodiac-live.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Decode and validate zodiac
+        run: |
+          cat assets/zodiac-clean-live.b64.0 \
+              assets/zodiac-clean-live.b64.1 \
+              assets/zodiac-clean-live.b64.2 \
+              assets/zodiac-clean-live.b64.3 \
+              assets/zodiac-clean-live.b64.4 \
+            | tr -d '\n\r ' | base64 -d > assets/zodiac-clean-live-20260829.webp
+          file assets/zodiac-clean-live-20260829.webp
+          test "$(stat -c%s assets/zodiac-clean-live-20260829.webp)" -gt 60000
+          python - <<'PY'
+          from pathlib import Path
+          b=Path('assets/zodiac-clean-live-20260829.webp').read_bytes()
+          assert b[:4] == b'RIFF' and b[8:12] == b'WEBP'
+          print('VALID WEBP', len(b))
+          PY
+      - name: Update english zodiac source
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          p=Path('english.html')
+          s=p.read_text()
+          s=re.sub(r"const ZODIAC_FILES=\[[^\n]+\];", "const ZODIAC_FILES=[];", s)
+          s=re.sub(r"function buildZodiac\(\)\{[^\n]+\}", "function buildZodiac(){if(!zodiacSpritePromise)zodiacSpritePromise=Promise.resolve('./assets/zodiac-clean-live-20260829.webp?v=20260829-cleanlive1');return zodiacSpritePromise}", s)
+          p.write_text(s)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/zodiac-clean-live-20260829.webp english.html
+          git commit -m "Apply clean high-resolution zodiac sprite" || exit 0
+          git push

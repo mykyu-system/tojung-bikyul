@@ -1,0 +1,30 @@
+name: Fix Hojakdo cache
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-hojakdo-cache.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch Hojakdo cache handling
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('english.html')
+          s=p.read_text()
+          s=s.replace("const HOJAKDO_FALLBACK='./assets/mockup-left.webp?v=20260828-flat4';", "const HOJAKDO_FALLBACK='./assets/mockup-left.webp?cb='+Date.now();")
+          p.write_text(s)
+          PY
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add english.html
+          git commit -m 'Force fresh Hojakdo asset loading' || exit 0
+          git push

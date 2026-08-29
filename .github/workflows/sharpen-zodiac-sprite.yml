@@ -1,0 +1,69 @@
+name: Sharpen Zodiac Sprite
+
+on:
+  push:
+    paths:
+      - '.github/workflows/sharpen-zodiac-sprite.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  sharpen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Build high-resolution zodiac sprite
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from PIL import Image, ImageFilter
+          import base64, io
+
+          parts=[]
+          for i in range(4):
+              p=Path(f'assets/zodiac-user-approved-final.b64.{i}')
+              parts.append(''.join(p.read_text().split()))
+          raw=base64.b64decode(''.join(parts))
+          im=Image.open(io.BytesIO(raw))
+          im.load()
+          print('SOURCE', im.format, im.size, im.mode)
+          if im.mode not in ('RGB','RGBA'):
+              im=im.convert('RGBA')
+
+          scale=4
+          up=im.resize((im.width*scale, im.height*scale), Image.Resampling.LANCZOS)
+          up=up.filter(ImageFilter.UnsharpMask(radius=1.35, percent=125, threshold=2))
+          out=Path('assets/zodiac-sharp-20260829.png')
+          up.save(out, 'PNG', optimize=True)
+
+          check=Image.open(out)
+          check.load()
+          print('OUTPUT', check.format, check.size, check.mode)
+          assert check.size == (im.width*4, im.height*4)
+          PY
+      - name: Switch app to sharp sprite
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('english.html')
+          s=p.read_text()
+          old="function buildZodiac(){if(!zodiacSpritePromise)zodiacSpritePromise=buildImage(ZODIAC_FILES,40000,'zodiac');return zodiacSpritePromise}"
+          new="function buildZodiac(){if(!zodiacSpritePromise)zodiacSpritePromise=Promise.resolve('./assets/zodiac-sharp-20260829.png?v=20260829-sharp1');return zodiacSpritePromise}"
+          if old not in s:
+              raise SystemExit('buildZodiac pattern not found')
+          s=s.replace(old,new)
+          p.write_text(s)
+          PY
+      - name: Commit sharp zodiac
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/zodiac-sharp-20260829.png english.html
+          git diff --cached --quiet && exit 0
+          git commit -m 'Sharpen zodiac sprite for crisp display'
+          git push

@@ -1,0 +1,45 @@
+name: Repair Hojakdo Binary
+on:
+  push:
+    paths:
+      - '.github/workflows/repair-hojakdo-binary.yml'
+permissions:
+  contents: write
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Rebuild exact WebP
+        run: |
+          cat assets/hojakdo-repair-20260829.b64.0 \
+              assets/hojakdo-repair-20260829.b64.1 \
+              assets/hojakdo-repair-20260829.b64.2 \
+              assets/hojakdo-repair-20260829.b64.3 \
+            | tr -d '\n\r ' | base64 -d > /tmp/hojakdo-current.webp
+          echo "SHA256=$(sha256sum /tmp/hojakdo-current.webp | awk '{print $1}')"
+          test "$(sha256sum /tmp/hojakdo-current.webp | awk '{print $1}')" = "465444482890a5bfe51f5d1bb9b0de48c2b0c4623b0f33b23d1f0bafdd9a157b"
+      - name: Validate WebP pixels
+        run: |
+          pip install pillow
+          python - <<'PY'
+          from PIL import Image
+          p='/tmp/hojakdo-current.webp'
+          im=Image.open(p)
+          im.load()
+          print('VALID', im.format, im.size, im.mode)
+          assert im.format == 'WEBP'
+          assert im.size == (300, 660)
+          PY
+      - name: Replace broken Hojakdo
+        run: |
+          cp /tmp/hojakdo-current.webp assets/hojakdo-current.webp
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/hojakdo-current.webp
+          git diff --cached --quiet && exit 0
+          git commit -m 'Repair Hojakdo image binary from validated source'
+          git push

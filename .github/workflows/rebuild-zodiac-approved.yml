@@ -1,0 +1,32 @@
+name: Rebuild Zodiac Approved
+on:
+  push:
+    branches: [zodiac-test-render]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild and validate
+        run: |
+          cat assets/approved-art.b64.* | tr -d '\n\r ' | base64 -d > assets/zodiac-crisp-live.webp
+          python - <<'PY'
+          from PIL import Image
+          p='assets/zodiac-crisp-live.webp'
+          im=Image.open(p); im.load()
+          print('VALID', im.format, im.size, im.mode)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zodiac-crisp-preview
+          path: assets/zodiac-crisp-live.webp
+      - name: Commit rebuilt image
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add assets/zodiac-crisp-live.webp
+          git diff --cached --quiet || git commit -m 'Rebuild approved zodiac artwork'
+          git push

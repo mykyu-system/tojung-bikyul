@@ -1,0 +1,64 @@
+name: Fix Hojakdo direct loading
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-hojakdo-direct.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply direct Hojakdo loading
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp assets/mockup-left.webp assets/hojakdo-current.webp
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          app = Path('english-app7.html')
+          s = app.read_text(encoding='utf-8')
+          s, n = re.subn(
+              r'(<img id="folkArt" src=")[^"]+(" alt="Korean Hojakdo-inspired tiger and magpie illustration")',
+              r'\1./assets/hojakdo-current.webp?v=20260829-direct2\2',
+              s,
+              count=1,
+          )
+          if n != 1:
+              raise SystemExit('folkArt image tag not found')
+          app.write_text(s, encoding='utf-8')
+
+          outer = Path('english.html')
+          s = outer.read_text(encoding='utf-8')
+          s = s.replace('./english-app7.html?v=20260829-recovery1', './english-app7.html?v=20260829-direct2')
+          s, n = re.subn(
+              r"const HOJAKDO_FALLBACK=.*?;",
+              "const HOJAKDO_FALLBACK='./assets/hojakdo-current.webp?cb='+Date.now();",
+              s,
+              count=1,
+          )
+          if n != 1:
+              raise SystemExit('HOJAKDO_FALLBACK not found')
+          old = "buildHojakdo().then(src=>applyHojakdo(doc,src)).catch(e=>console.error(e));"
+          if old not in s:
+              raise SystemExit('buildHojakdo override call not found')
+          s = s.replace(old, '', 1)
+          outer.write_text(s, encoding='utf-8')
+          PY
+          file assets/hojakdo-current.webp
+          test -s assets/hojakdo-current.webp
+      - name: Commit direct Hojakdo fix
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add english.html english-app7.html assets/hojakdo-current.webp
+          git commit -m "Use uploaded Hojakdo directly without overlay loader"
+          git push

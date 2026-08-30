@@ -15,6 +15,9 @@ assert.ok(!app.includes("BRANCH[m-1]"), 'Old month-branch calculation survived')
 assert.ok(app.indexOf('fortune-engine-20260830.js') < app.indexOf("const ENGINE=window.TojungEngine"), 'Engine must load before the app');
 assert.ok(app.includes('function pillarEnglish('), 'Plain-English pillar formatter is missing');
 assert.ok(app.includes('function birthHourEnglish('), 'Plain-English birth-hour formatter is missing');
+assert.ok(app.includes("Jia:['Wood','Active']"), 'Active energy mapping is missing');
+assert.ok(app.includes("Yi:['Wood','Receptive']"), 'Receptive energy mapping is missing');
+assert.ok(!/'(?:Yang|Yin) (?:Wood|Fire|Earth|Metal|Water)'/.test(app), 'Raw Yin/Yang energy labels remain visible');
 assert.ok(app.includes("['Year pillar',pillarEnglish(tg)]"), 'Year pillar still exposes raw pinyin');
 assert.ok(app.includes("['Month pillar',pillarEnglish(mg)]"), 'Month pillar still exposes raw pinyin');
 assert.ok(app.includes("['Target-day pillar',pillarEnglish(dg)]"), 'Day pillar still exposes raw pinyin');
@@ -24,11 +27,11 @@ const inlineScripts = [...app.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>
 assert.ok(inlineScripts.length >= 1, 'No inline application script found');
 for (const script of inlineScripts) new Function(script);
 
-assert.ok(wrapper.includes('english-app7.html?v=20260830-plain-terms1'), 'Wrapper cache key was not updated');
+assert.ok(wrapper.includes('english-app7.html?v=20260830-energy-terms1'), 'Wrapper cache key was not updated');
 for (const file of ['blogger.html', 'blogger-english.html']) {
-  assert.ok(read(file).includes('english.html?v=blogger-plain-terms-20260830'), file + ' cache key was not updated');
+  assert.ok(read(file).includes('english.html?v=blogger-energy-terms-20260830'), file + ' cache key was not updated');
 }
-assert.ok(read('blogger-post-final.html').includes('english.html?v=20260830-plain-terms1'), 'Blogger post cache key was not updated');
+assert.ok(read('blogger-post-final.html').includes('english.html?v=20260830-energy-terms1'), 'Blogger post cache key was not updated');
 
 process.stdout.write(JSON.stringify({
   status: 'PASS',

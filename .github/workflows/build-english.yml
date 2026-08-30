@@ -6,6 +6,10 @@ on:
       - 'Mykyu-system_TOJEONG_100_FINAL.json'
       - 'english.html'
       - 'scripts/build_english_data.py'
+      - 'scripts/validate_fortune_engine.js'
+      - 'scripts/validate_english_results.js'
+      - 'scripts/validate_app_shell.js'
+      - 'assets/fortune-engine-20260830.js'
       - '.github/workflows/build-english.yml'
 permissions:
   contents: write
@@ -18,8 +22,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
       - name: Build English data
         run: python scripts/build_english_data.py
+      - name: Validate calculation engine
+        run: node scripts/validate_fortune_engine.js
+      - name: Validate English results
+        run: node scripts/validate_english_results.js
+      - name: Validate application shell
+        run: node scripts/validate_app_shell.js
       - name: Commit generated English data
         run: |
           git config user.name 'github-actions[bot]'

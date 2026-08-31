@@ -9,7 +9,9 @@ on:
       - 'scripts/validate_fortune_engine.js'
       - 'scripts/validate_english_results.js'
       - 'scripts/validate_app_shell.js'
+      - 'scripts/validate_reading_art.js'
       - 'assets/fortune-engine-20260830.js'
+      - 'assets/reading-art-20260830.js'
       - '.github/workflows/build-english.yml'
 permissions:
   contents: write
@@ -33,6 +35,8 @@ jobs:
         run: node scripts/validate_english_results.js
       - name: Validate application shell
         run: node scripts/validate_app_shell.js
+      - name: Validate 144 result illustrations
+        run: node scripts/validate_reading_art.js
       - name: Commit generated English data
         run: |
           git config user.name 'github-actions[bot]'

@@ -12,6 +12,7 @@ on:
       - 'scripts/validate_reading_art.js'
       - 'assets/fortune-engine-20260830.js'
       - 'assets/reading-art-20260830.js'
+      - 'assets/reading-scenes-20260831/**'
       - '.github/workflows/build-english.yml'
 permissions:
   contents: write
